@@ -1,0 +1,43 @@
+.section-page{
+  height: 100vh;
+  width: 100vw;
+  display:block;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0 30px;
+}
+.div-input {
+  position:sticky;
+  top: 0;
+  width: 100%;
+  min-height: 30px;
+  max-height: 30%;
+}
+.text-field {
+    width: 100%;
+    min-height: 30px;
+    max-height: 100%;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    border-bottom-left-radius: 9px;
+    border-bottom-right-radius: 9px;
+    border: 1px solid #ccc; /* Прямоугольная рамка */
+    outline: none;
+    box-shadow: 3px 2px 5px 0 rgba(82, 5, 237, 0.2);
+  }
+
+.div-filter {
+  display: flex;
+  width: 100%;
+  min-height: 30px;
+
+}
+.filter-item {
+  margin:2%
+}
+
+.text-field:focus {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 4px #007bff;
+  }

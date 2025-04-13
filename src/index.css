@@ -1,7 +1,9 @@
 body, html {
     height: 100%;
+    width: 100%;
     margin: 0;
-    display: flex;
-    justify-content: center;  /* Центрирование по горизонтали */
-
+    display: block;
+    justify-content: center; 
+    overflow-y: auto;      
+    overflow-x: hidden;    
   }

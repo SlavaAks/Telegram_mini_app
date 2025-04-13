@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
+import './Catalog.css';
 
 const initialProducts = [
   { id: 1, name: 'Nike Air Max', category: 'shoes', brand: 'Nike', size: '42', discount: true },
@@ -34,61 +35,69 @@ const Catalog = () => {
   });
 
   return (
-    <div className="">
+    <section className="section-page">
       <TopBar
         onLogoClick={() => navigate('/')}
         onCartClick={() => navigate('/cart')}
       />
 
-      {/* Фильтры */}
-      <div className="">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Поиск модели"
-          className=""
-        />
-        <select
-          value={categoryFilter}
-          onChange={e => setCategoryFilter(e.target.value)}
-          className=""
-        >
-          <option value="all">Все категории</option>
-          <option value="clothes">Одежда</option>
-          <option value="shoes">Обувь</option>
-        </select>
-        <select
-          value={brandFilter}
-          onChange={e => setBrandFilter(e.target.value)}
-          className=""
-        >
-          <option value="all">Все бренды</option>
-          {availableBrands.map(brand => (
-            <option key={brand} value={brand}>{brand}</option>
-          ))}
-        </select>
-        <select
-          value={sizeFilter}
-          onChange={e => setSizeFilter(e.target.value)}
-          className=""
-        >
-          <option value="all">Все размеры</option>
-          {availableSizes.map(size => (
-            <option key={size} value={size}>{size}</option>
-          ))}
-        </select>
-        <label className="">
+      <div className="div-input">
           <input
-            type="checkbox"
-            checked={discountOnly}
-            onChange={e => setDiscountOnly(e.target.checked)}
-            className=""
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Можно найти нужную модель ..."
+            className="text-field"
           />
-          <span>Только со скидкой</span>
-        </label>
       </div>
-
+      <div className="div-filter">
+        <div className='filter-item'>
+          <select
+            value={categoryFilter}
+            onChange={e => setCategoryFilter(e.target.value)}
+            className="select-item"
+          >
+            <option value="all">Все категории</option>
+            <option value="clothes">Одежда</option>
+            <option value="shoes">Обувь</option>
+          </select>
+          </div>
+        <div className='filter-item'>
+          <select
+            value={brandFilter}
+            onChange={e => setBrandFilter(e.target.value)}
+            className="select-brand"
+          >
+            <option value="all">Все бренды</option>
+            {availableBrands.map(brand => (
+              <option key={brand} value={brand}>{brand}</option>
+            ))}
+          </select>
+        </div>
+        <div className='filter-item'>
+          <select
+            value={sizeFilter}
+            onChange={e => setSizeFilter(e.target.value)}
+            className="select-size"
+          >
+            <option value="all">Все размеры</option>
+            {availableSizes.map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
+        <div className='filter-item'>
+          <label className="">
+            <input
+              type="checkbox"
+              checked={discountOnly}
+              onChange={e => setDiscountOnly(e.target.checked)}
+              className=""
+            />
+            <span>Только со скидкой</span>
+          </label>
+        </div>
+      </div>
       {/* Список товаров */}
       <div className="">
         {filteredProducts.length > 0 ? (
@@ -105,7 +114,7 @@ const Catalog = () => {
           <p>Нет товаров, соответствующих фильтрам.</p>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
