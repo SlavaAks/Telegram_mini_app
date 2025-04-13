@@ -1,14 +1,61 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
+import ProductCard from '../components/ProductCard';
 import './Catalog.css';
 
+
 const initialProducts = [
-  { id: 1, name: 'Nike Air Max', category: 'shoes', brand: 'Nike', size: '42', discount: true },
-  { id: 2, name: 'Adidas UltraBoost', category: 'shoes', brand: 'Adidas', size: '41', discount: false },
-  { id: 3, name: 'Puma RS-X', category: 'shoes', brand: 'Puma', size: '42', discount: true },
-  { id: 4, name: "Levi's Jeans", category: 'clothes', brand: "Levi's", size: 'L', discount: false },
-  { id: 5, name: 'Zara T-shirt', category: 'clothes', brand: 'Zara', size: 'M', discount: true }
+  {
+    id: 1,
+    name: 'Nike Air Max',
+    category: 'shoes',
+    brand: 'Nike',
+    size: '42',
+    price: 12000,
+    discount: 20,
+    image: 'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/1c72d126-6b45-4a67-b992-b5f99e4a8edb/air-max-90-shoes.png',
+  },
+  {
+    id: 2,
+    name: 'Adidas UltraBoost',
+    category: 'shoes',
+    brand: 'Adidas',
+    size: '41',
+    price: 14000,
+    discount: 0,
+    image: 'https://assets.adidas.com/images/w_600,f_auto,q_auto/4ed79f9b23cb4f0bb289afc600d80249_9366/Ultraboost_Light_Shoes_White_HQ6352_01_standard.jpg',
+  },
+  {
+    id: 3,
+    name: 'Puma RS-X',
+    category: 'shoes',
+    brand: 'Puma',
+    size: '42',
+    price: 9000,
+    discount: 10,
+    image: 'https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/388883/01/sv01/fnd/IND/fmt/png/PUMA-RS-X-Shoes',
+  },
+  {
+    id: 4,
+    name: "Levi's Jeans",
+    category: 'clothes',
+    brand: "Levi's",
+    size: 'L',
+    price: 7000,
+    discount: 0,
+    image: 'https://lsco.scene7.com/is/image/lsco/005010216-front-pdp.jpg',
+  },
+  {
+    id: 5,
+    name: 'Zara T-shirt',
+    category: 'clothes',
+    brand: 'Zara',
+    size: 'M',
+    price: 2500,
+    discount: 15,
+    image: 'https://static.zara.net/photos///2023/V/0/2/p/5645/443/250/2/w/850/5645443250_6_1_1.jpg',
+  },
 ];
 
 const Catalog = () => {
@@ -99,16 +146,17 @@ const Catalog = () => {
         </div>
       </div>
       {/* Список товаров */}
-      <div className="">
+      <div className="product-list">
         {filteredProducts.length > 0 ? (
           filteredProducts.map(product => (
-            <div key={product.id} className="">
-              <h3 className="">{product.name}</h3>
-              <p className="">Категория: {product.category === 'shoes' ? 'Обувь' : 'Одежда'}</p>
-              <p className="">Бренд: {product.brand}</p>
-              <p className="">Размер: {product.size}</p>
-              {product.discount && <p className="">Со скидкой!</p>}
-            </div>
+            <ProductCard
+              key={product.id}
+              image={product.image}
+              model={product.name}
+              price={product.price}
+              discount={product.discount}
+              onClick={() => navigate(`/product/${product.id}`)}
+            />
           ))
         ) : (
           <p>Нет товаров, соответствующих фильтрам.</p>

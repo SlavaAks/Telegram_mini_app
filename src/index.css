@@ -4,6 +4,6 @@ body, html {
     margin: 0;
     display: block;
     justify-content: center; 
-    overflow-y: auto;      
-    overflow-x: hidden;    
+    overflow-y: auto;
+    overflow-x: hidden; 
   }
