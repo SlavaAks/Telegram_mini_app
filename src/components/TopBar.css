@@ -12,6 +12,21 @@
   background: white;
 }
 
+.cart-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ff0000;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .top-section, .last-section {
   display: flex;
   align-items: center;

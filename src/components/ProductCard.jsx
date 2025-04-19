@@ -2,7 +2,7 @@ import React from 'react';
 import './ProductCard.css';
 
 const ProductCard = ({ image, model, price, discount, onClick }) => {
-  const discountedPrice = discount ? price - price * (discount / 100) : price;
+  const discountedPrice = discount ? price - (price * discount) / 100 : price;
 
   return (
     <div className="product-card" onClick={onClick}>
@@ -16,11 +16,15 @@ const ProductCard = ({ image, model, price, discount, onClick }) => {
         <div className="product-price">
           {discount ? (
             <>
-              <span className="product-price-discounted">{Math.round(discountedPrice)}BYN</span>
-              <span className="product-price-original">{price}BYN</span>
+              <span className="product-price-discounted">
+                {Math.round(discountedPrice)} BYN
+              </span>
+              <span className="product-price-original">
+                {price} BYN
+              </span>
             </>
           ) : (
-            <span>{price}₽</span>
+            <span>{price} BYN</span>
           )}
         </div>
       </div>

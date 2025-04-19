@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Catalog from './pages/Catalog';
 import Cart from './pages/Cart';
+import Product from './pages/Product';
 import { initTelegram } from './telegram';
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Catalog />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/product/:id" element={<Product />} />
       </Routes>
     </Router>
   );

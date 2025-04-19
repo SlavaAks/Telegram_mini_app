@@ -20,11 +20,15 @@
   max-height: 30%;
   background: white;
   z-index: 10;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
 }
 
 /* Поле поиска */
 .text-field {
   width: 100%;
+  font-size: 16px;
   min-height: 30px;
   max-height: 100%;
   border-radius: 9px;
@@ -44,18 +48,98 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 10px;
+  gap: 12px;
   margin-top: 10px;
+  padding-bottom: 16px;
+  box-sizing: border-box;
 }
 
 .filter-item {
   flex: 1 1 150px;
   min-width: 120px;
+  max-width: 200px;
 }
 
+.select-item,
+.select-brand {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.select-item:focus,
+.select-brand:focus {
+  border: 1px solid #007bff;
+}
+
+/* Чекбокс */
+.filter-item input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.filter-item label {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Кнопки размеров */
+.size-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.size-button {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.size-button:hover {
+  background-color: #f0f0f0;
+}
+
+.size-button.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* кнопка все товары или со скидкой */
+
+.discount-button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #f2f2f2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.discount-button:hover {
+  background-color: #e0e0e0;
+}
+
+.discount-button.active {
+  border: 2px solid #007bff;
+  background-color: #e6f0ff;
+  font-weight: 500;
+}
+
+/* Список товаров */
 .product-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
   padding: 16px;
 }

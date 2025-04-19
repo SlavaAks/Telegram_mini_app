@@ -7,11 +7,6 @@ const Cart = () => {
 
   return (
     <div className="">
-      <TopBar
-        onLogoClick={() => navigate('/')}
-        onCartClick={() => {}}
-      />
-
       <h2 className="">Корзина</h2>
       <button>Продолжить покупки</button>
       <p>....</p>

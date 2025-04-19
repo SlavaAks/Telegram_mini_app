@@ -1,85 +1,71 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { data, useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import ProductCard from '../components/ProductCard';
+import request from '../utils/api.ts';
 import './Catalog.css';
-
-
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Nike Air Max',
-    category: 'shoes',
-    brand: 'Nike',
-    size: '42',
-    price: 12000,
-    discount: 20,
-    image: 'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/1c72d126-6b45-4a67-b992-b5f99e4a8edb/air-max-90-shoes.png',
-  },
-  {
-    id: 2,
-    name: 'Adidas UltraBoost',
-    category: 'shoes',
-    brand: 'Adidas',
-    size: '41',
-    price: 14000,
-    discount: 0,
-    image: 'https://assets.adidas.com/images/w_600,f_auto,q_auto/4ed79f9b23cb4f0bb289afc600d80249_9366/Ultraboost_Light_Shoes_White_HQ6352_01_standard.jpg',
-  },
-  {
-    id: 3,
-    name: 'Puma RS-X',
-    category: 'shoes',
-    brand: 'Puma',
-    size: '42',
-    price: 9000,
-    discount: 10,
-    image: 'https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/388883/01/sv01/fnd/IND/fmt/png/PUMA-RS-X-Shoes',
-  },
-  {
-    id: 4,
-    name: "Levi's Jeans",
-    category: 'clothes',
-    brand: "Levi's",
-    size: 'L',
-    price: 7000,
-    discount: 0,
-    image: 'https://lsco.scene7.com/is/image/lsco/005010216-front-pdp.jpg',
-  },
-  {
-    id: 5,
-    name: 'Zara T-shirt',
-    category: 'clothes',
-    brand: 'Zara',
-    size: 'M',
-    price: 2500,
-    discount: 15,
-    image: 'https://static.zara.net/photos///2023/V/0/2/p/5645/443/250/2/w/850/5645443250_6_1_1.jpg',
-  },
-];
 
 const Catalog = () => {
   const navigate = useNavigate();
 
+  const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
   const [discountOnly, setDiscountOnly] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await request('catalog');
+        const rawData = response.data;
 
+        const parsed = rawData.map((item) => ({
+          id: item[0],
+          brand: item[1],
+          name: item[2],
+          image: item[3],
+          availableSizes: item[4].split(','),
+          price: parseInt(item[5].replace(/\D/g, ''), 10),
+          discountSize: item[6]!==null ?item[6].split(','):[],
+          discount: item[7] !== null? parseInt(item[7].replace('%','')):false,
+          category: item[8],
+        }));
 
-  const availableBrands = Array.from(new Set(initialProducts.map(p => p.brand)));
-  const availableSizes = Array.from(new Set(initialProducts.map(p => p.size)));
+        setProducts(parsed);
+        console.log('Продукты:', parsed);
+      } catch (error) {
+        console.error('Ошибка при загрузке товаров:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredProducts = initialProducts.filter(product => {
+    fetchProducts();
+  }, []);
+  
+  const availableBrands = Array.from(new Set(products.map(p => p.brand)));
+
+  const filteredProducts = products.filter(product => {
     if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (categoryFilter !== 'all' && product.category !== categoryFilter) return false;
     if (brandFilter !== 'all' && product.brand !== brandFilter) return false;
-    if (sizeFilter !== 'all' && product.size !== sizeFilter) return false;
+    if (
+      sizeFilter !== 'all' &&
+      !product.availableSizes.includes(sizeFilter)
+    ) return false;
     if (discountOnly && !product.discount) return false;
     return true;
   });
+
+  const handleClick = (product) => {
+    navigate(`/product/${product.id}`, { state: { product } });
+  };
+
+  const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', ...Array.from({ length: 15 }, (_, i) => (35 + i).toString())];
+  const allCategory = ["shoes","clothes"]
 
   return (
     <section className="section-page">
@@ -89,27 +75,32 @@ const Catalog = () => {
       />
 
       <div className="div-input">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Можно найти нужную модель ..."
-            className="text-field"
-          />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Можно найти нужную модель ..."
+          className="text-field"
+        />
       </div>
+
       <div className="div-filter">
-        <div className='filter-item'>
+        <div className="filter-item">
           <select
             value={categoryFilter}
             onChange={e => setCategoryFilter(e.target.value)}
             className="select-item"
           >
             <option value="all">Все категории</option>
-            <option value="clothes">Одежда</option>
-            <option value="shoes">Обувь</option>
+            {allCategory.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
-          </div>
-        <div className='filter-item'>
+        </div>
+
+        <div className="filter-item">
           <select
             value={brandFilter}
             onChange={e => setBrandFilter(e.target.value)}
@@ -117,49 +108,50 @@ const Catalog = () => {
           >
             <option value="all">Все бренды</option>
             {availableBrands.map(brand => (
-              <option key={brand} value={brand}>{brand}</option>
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
             ))}
           </select>
         </div>
+
         <div className='filter-item'>
-          <select
-            value={sizeFilter}
-            onChange={e => setSizeFilter(e.target.value)}
-            className="select-size"
-          >
-            <option value="all">Все размеры</option>
-            {availableSizes.map(size => (
-              <option key={size} value={size}>{size}</option>
+  <button
+    className={`discount-button ${discountOnly ? 'active' : ''}`}
+    onClick={() => setDiscountOnly(prev => !prev)}
+  >
+    {discountOnly ? 'Все товары' : 'Cо скидкой'}
+  </button>
+</div>
+
+        {/* <div className="filter-item"> */}
+          <div className="size-buttons">
+            {allSizes.map(size => (
+              <button
+                key={size}
+                className={`size-button ${sizeFilter === size ? 'selected' : ''}`}
+                onClick={() => setSizeFilter(sizeFilter === size ? 'all' : size)}
+              >
+                {size}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
-        <div className='filter-item'>
-          <label className="">
-            <input
-              type="checkbox"
-              checked={discountOnly}
-              onChange={e => setDiscountOnly(e.target.checked)}
-              className=""
-            />
-            <span>Только со скидкой</span>
-          </label>
-        </div>
-      </div>
-      {/* Список товаров */}
+      {/* </div> */}
+
       <div className="product-list">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <p>Загрузка товаров...</p>
+        ) : filteredProducts.length > 0 ? (
           filteredProducts.map(product => (
             <ProductCard
               key={product.id}
-              image={product.image}
-              model={product.name}
-              price={product.price}
-              discount={product.discount}
-              onClick={() => navigate(`/product/${product.id}`)}
+              {...product}
+              onClick={() => handleClick(product)}
             />
           ))
         ) : (
-          <p>Нет товаров, соответствующих фильтрам.</p>
+          <p>Ничего не нашлось</p>
         )}
       </div>
     </section>

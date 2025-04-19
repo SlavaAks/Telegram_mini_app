@@ -1,32 +1,27 @@
-  .product-card {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.product-card {
+    flex: 0 1 calc(50% - 8px); /* 2 карточки в ряд с отступом */
+    margin-bottom: 12px;
   }
   
-  .product-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* 3 карточки на планшетах и выше */
+  @media (min-width: 456px) {
+    .product-card {
+      flex: 0 1 calc(33.333% - 8px);
+    }
+  }
+  
+  .product-card:active {
+    background-color: #f0f0f0;
   }
   
   .product-image-wrapper {
     position: relative;
     width: 100%;
-    height: 0;
-    padding-bottom: 100%;  /* Пропорции для картинки (1:1) */
+    aspect-ratio: 1 / 1;
     background-color: #f3f3f3;
   }
   
   .product-image {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -34,54 +29,42 @@
   
   .product-discount {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: #00bcd4; /* Telegram-like blue */
+    top: 6px;
+    right: 6px;
+    background-color: #ff3b30;
     color: white;
     font-size: 12px;
     font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    padding: 2px 6px;
+    border-radius: 4px;
   }
   
   .product-info {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    padding: 8px 10px;
   }
   
   .product-model {
     font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
+    font-weight: 500;
+    color: #7f7d7d;
+    margin: 0 0 4px;
   }
   
   .product-price {
-    margin-top: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #111;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
   
   .product-price-discounted {
-    color: #00bcd4; /* Telegram blue */
-    margin-right: 6px;
+    color: #ff3b30;
   }
   
   .product-price-original {
-    font-size: 14px;
-    color: #999;
+    color: #8e8e93;
+    font-size: 12px;
     text-decoration: line-through;
-  }
-  
-  /* На маленьких экранах — 1 карточка в ряд */
-  @media (max-width: 359px) {
-    .product-list {
-      grid-template-columns: 1fr;
-    }
   }
   
