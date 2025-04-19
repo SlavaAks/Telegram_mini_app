@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Product.css";
 import TopBar from '../components/TopBar';
+import useCart from '../hooks/useCart';
 
 const Product = ({ onAddToCart }) => {
+  const { addToCart } = useCart();
   const { state } = useLocation();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
@@ -30,11 +32,7 @@ const Product = ({ onAddToCart }) => {
     : price;
 
 
-  const handleAddToCartClick = () => {
-      if (selectedSize) {
-        onAddToCart();  // Вызываем метод для обновления количества товаров в корзине
-      }
-    };
+
   return (
     <div className="product-page">
       <div className="top-bar-wrapper">
@@ -82,7 +80,7 @@ const Product = ({ onAddToCart }) => {
       <button
         className="buy-btn"
         disabled={!selectedSize}
-        onClick={handleAddToCartClick}
+      onClick={() => addToCart({id,selectedSize,finalPrice,brand,name,image})}
       >
         Добавить в корзину 😌
       </button>

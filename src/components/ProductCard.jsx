@@ -1,18 +1,18 @@
 import React from 'react';
 import './ProductCard.css';
 
-const ProductCard = ({ image, model, price, discount, onClick }) => {
+const ProductCard = ({ image, name, brand, price, discount, onClick }) => {
   const discountedPrice = discount ? price - (price * discount) / 100 : price;
 
   return (
     <div className="product-card" onClick={onClick}>
       <div className="product-image-wrapper">
-        <img src={image} alt={model} className="product-image" />
+        <img src={image} alt={name} className="product-image" />
         {discount && <div className="product-discount">-{discount}%</div>}
       </div>
 
       <div className="product-info">
-        <h3 className="product-model">{model}</h3>
+        <h3 className="product-model">{brand} {name}</h3>
         <div className="product-price">
           {discount ? (
             <>

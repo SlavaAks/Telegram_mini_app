@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { tg } from '../telegram';
-import './TopBar.css'
-import logo from '../assets/React-icon.svg'
+import useCart from '../hooks/useCart';
+import './TopBar.css';
+import logo from '../assets/React-icon.svg';
 
-const TopBar = ({ onLogoClick, onCartClick, cartCount }) => {
+const TopBar = ({ onLogoClick, onCartClick }) => {
+  const navigate = useNavigate();
+  const { cart } = useCart();
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      setAnimate(true);
+      const timeout = setTimeout(() => setAnimate(false), 400); // дольше для shake
+      return () => clearTimeout(timeout);
+    }
+  }, [cart.length]);
+
   return (
     <section className='main-section'>
       <section className='top-section'>
@@ -18,12 +32,9 @@ const TopBar = ({ onLogoClick, onCartClick, cartCount }) => {
         </div>
       </section>
       <section className='last-section'>
-        <div className='div-item'>
-          <ShoppingCart
-            className="button-icon"
-            onClick={onCartClick}
-          />
-           {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+        <div className='div-item cart-wrapper' onClick={onCartClick}>
+          <ShoppingCart className={`button-icon cart-icon ${animate ? 'shake' : ''}`} />
+          {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
         </div>
         <div className='div-item'>
           <span className="avatar">
