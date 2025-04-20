@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Product.css";
 import TopBar from '../components/TopBar';
-import useCart from '../hooks/useCart';
+import { useCart } from '../context/CartContext';
 
 const Product = ({ onAddToCart }) => {
   const { addToCart } = useCart();

@@ -20,6 +20,7 @@ const App = () => {
   if (!isLoaded) return <p className="p-6">Загрузка данных...</p>;
 
   return (
+
     <Router>
       <Routes>
         <Route path="/" element={<Catalog />} />

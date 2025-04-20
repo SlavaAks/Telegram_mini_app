@@ -23,9 +23,19 @@
     object-fit: contain;
   }
   
+  
   .remove-link {
     color: #d9534f;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: color 0.3s ease, transform 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent; /* Начальная прозрачная рамка */
+    padding: 2px 6px; /* Добавим немного отступов, чтобы рамка не была слишком близко к тексту */
+    border-radius: 4px; /* Закругленные углы рамки */
   }
   
+  .remove-link:hover {
+    color: #c9302c;  /* Цвет при наведении */
+    transform: scale(1.1);  /* Легкое увеличение кнопки */
+    border-color: #ccc;  /* Цвет серой рамки при наведении */
+  }

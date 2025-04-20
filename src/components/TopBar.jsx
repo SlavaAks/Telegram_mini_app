@@ -1,20 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { tg } from '../telegram';
-import useCart from '../hooks/useCart';
 import './TopBar.css';
-import logo from '../assets/React-icon.svg';
+import logo from '../assets/image.png';
 
 const TopBar = ({ onLogoClick, onCartClick }) => {
   const navigate = useNavigate();
   const { cart } = useCart();
   const [animate, setAnimate] = useState(false);
+  const isFirstRender = useRef(true);
+
+  const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'user';
+  const avatar = window.Telegram?.WebApp?.initDataUnsafe?.user?.photo_url 
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (cart.length > 0) {
       setAnimate(true);
-      const timeout = setTimeout(() => setAnimate(false), 400); // дольше для shake
+      const timeout = setTimeout(() => setAnimate(false), 300);
       return () => clearTimeout(timeout);
     }
   }, [cart.length]);
@@ -32,14 +40,23 @@ const TopBar = ({ onLogoClick, onCartClick }) => {
         </div>
       </section>
       <section className='last-section'>
-        <div className='div-item cart-wrapper' onClick={onCartClick}>
-          <ShoppingCart className={`button-icon cart-icon ${animate ? 'shake' : ''}`} />
-          {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
+        <div className='div-item' style={{ position: 'relative' }}>
+          <ShoppingCart
+            className={`button-icon ${animate ? 'shake' : ''}`}
+            onClick={onCartClick}
+          />
+          {cart.length > 0 && (
+            <span className="cart-count">{cart.length}</span>
+          )}
         </div>
-        <div className='div-item'>
-          <span className="avatar">
-            {tg.initDataUnsafe?.user?.username || 'user'}
-          </span>
+        <div className="div-item">
+          {avatar ? (
+            <img src={avatar} alt="avatar" className="avatar-img" />
+          ) : (
+            <span className="avatar-text">
+              {username || 'User'}
+            </span>
+          )}
         </div>
       </section>
     </section>

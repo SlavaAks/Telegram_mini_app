@@ -50,38 +50,61 @@ const Catalog = () => {
 
   // Загружаем при первом рендере, если данных нет
   useEffect(() => {
-    setModelFilter('all');
     if (products.length === 0) {
-      fetchProducts();
+      fetchProducts(); // Загружаем продукты только при пустом списке
     } else {
-      setLoading(false);
+      setLoading(false); // Если данные уже загружены, убираем состояние загрузки
     }
-  }, [products,brandFilter]);
+  }, [products]); // Этот эффект срабатывает только при изменении состояния продуктов
+  
+  useEffect(() => {
+    setBrandFilter('all')
+    setModelFilter('all')
+  }, [categoryFilter,]); // Зависимости для изменения фильтров
 
-  const availableBrands = Array.from(new Set(products.map(p => p.brand)));
+  const availableBrands = Array.from(
+    new Set(
+      products
+        .filter(p => categoryFilter === 'all' || p.category === categoryFilter)
+        .map(p => p.brand)
+    )
+  );
   const availableModels = brandFilter !== 'all'
   ? Array.from(new Set(products
-    .filter(p => p.brand === brandFilter)
+    .filter(p => p.brand === brandFilter && (p.category === categoryFilter || categoryFilter === 'all'))
     .map(p => p.name))) : []; 
 
   const filteredProducts = products.filter(product => {
     if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (categoryFilter !== 'all' && product.category !== categoryFilter) return false;
     if (brandFilter !== 'all' && product.brand !== brandFilter) return false;
+    if (modelFilter !== 'all' && product.name !== modelFilter) return false;
     if (
       sizeFilter !== 'all' &&
       !product.availableSizes.includes(sizeFilter)
     ) return false;
     if (discountOnly && !product.discount) return false;
     return true;
-    if (modelFilter !== 'all' && product.name !== modelFilter) return false;
   });
 
   const handleClick = (product) => {
     navigate(`/product/${product.id}`, { state: { product } });
   };
 
-  const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', ...Array.from({ length: 15 }, (_, i) => (35 + i).toString())];
+  const shoesSize = Array.from({ length: 15 }, (_, i) => (35 + i).toString())
+  const clothesSize  =['XS', 'S', 'M', 'L', 'XL', 'XXL','XXXL']
+  const allSizes =
+  categoryFilter === 'shoes'
+    ? shoesSize
+    : categoryFilter === 'clothes'
+    ? clothesSize
+    : [...clothesSize, ...shoesSize];
+
+
+  const categoryLabels = {
+    shoes: 'Обувь',
+    clothes: 'Одежда',
+  };
   const allCategory = ["shoes", "clothes"]
 
   return (
@@ -110,9 +133,9 @@ const Catalog = () => {
           >
             <option value="all">Все категории</option>
             {allCategory.map(category => (
-              <option key={category} value={category}>
-                {category}
-              </option>
+                <option key={category} value={category}>
+                        {categoryLabels[category] || category}
+                </option>
             ))}
           </select>
         </div>

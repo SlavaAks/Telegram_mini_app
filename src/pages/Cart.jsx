@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useCart from '../hooks/useCart';
+import { useCart } from '../context/CartContext';
 import './Cart.css';
 import CartItem from '../components/CartItem'; // Добавим импорт
 import TopBar from '../components/TopBar';

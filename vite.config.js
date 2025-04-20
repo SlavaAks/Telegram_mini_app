@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      '1b302d5b95530f3dfdbdd4a0736972ed.serveo.net'
+      '29b53f5287c373014783c83e5b31c2bd.serveo.net'
     ]
   }
 });
