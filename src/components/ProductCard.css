@@ -1,6 +1,7 @@
 .product-card {
     flex: 0 1 calc(50% - 8px); /* 2 карточки в ряд с отступом */
     margin-bottom: 12px;
+    cursor: pointer;
   }
   
   /* 3 карточки на планшетах и выше */
@@ -29,14 +30,14 @@
   
   .product-discount {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    background-color: #ff3b30;
+    top: 2px;
+    right: 2px;
+    background: linear-gradient(270deg, #b3267a, #b106f0); /* Цвета градиента */
     color: white;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 10px;
   }
   
   .product-info {
