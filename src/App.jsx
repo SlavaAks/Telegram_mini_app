@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Catalog from './pages/Catalog';
 import Cart from './pages/Cart';
 import Product from './pages/Product';
+import Checkout from './pages/Checkout';
 import { initTelegram } from './telegram';
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/" element={<Catalog />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product/:id" element={<Product />} />
+        <Route path="/checkout" element={<Checkout />}/>
       </Routes>
     </Router>
   );

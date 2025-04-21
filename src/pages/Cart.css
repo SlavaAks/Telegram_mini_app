@@ -17,3 +17,33 @@
     font-weight: 500;
     cursor: pointer;
   }
+
+
+  .checkout-wrapper {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 999;
+  }
+  
+  .checkout-btn {
+    background-color: var(--tg-theme-button-color, #2481cc); /* Поддержка Telegram темы */
+    color: var(--tg-theme-button-text-color, #fff);
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+  
+  .checkout-btn:hover {
+    background-color: #1c6cb7;
+  }
+  
+  .checkout-btn:active {
+    transform: scale(0.97);
+  }
+  

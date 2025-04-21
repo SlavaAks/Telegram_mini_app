@@ -29,7 +29,13 @@ const Cart = () => {
           {cart.map((item) => (
             <CartItem key={item.id_item} item={item} onRemove={removeFromCart} />
           ))}
+          <div className="checkout-wrapper">
+        <button className="checkout-btn" onClick={() => navigate('/checkout')}>
+      🛒 Оформить заказ
+        </button>
         </div>
+        </div>
+        
       )}
     </div>
   );
