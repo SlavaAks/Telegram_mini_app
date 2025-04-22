@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { data, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import ProductCard from '../components/ProductCard';
 import useLocalStorage from '../hooks/useLocalStorage';  // Хук для localStorag

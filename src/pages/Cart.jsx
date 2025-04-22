@@ -8,7 +8,6 @@ import TopBar from '../components/TopBar';
 const Cart = () => {
   const { cart, removeFromCart } = useCart();
   const navigate = useNavigate();
-  console.log(cart)
   return (
     <div className="cart-page">
       <TopBar

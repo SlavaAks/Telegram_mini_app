@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'stan-pubs-transcript-chrome.trycloudflare.com'
+      'thongs-mem-flashing-overview.trycloudflare.com'
     ]
   }
 });

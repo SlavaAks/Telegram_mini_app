@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Checkout.css';
 import TopBar from '../components/TopBar';
-import CartItem from '../components/CartItem'
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import request from '../utils/api.ts';
 
 const Checkout = () => {
+  const navigate = useNavigate();
+  const { cart, removeFromCart } = useCart();
   const WebApp = window.Telegram?.WebApp;
-  const mainButton = WebApp?.MainButton;
-  const backButton = WebApp?.BackButton;
-  const initDataUnsafe = WebApp?.initDataUnsafe;
+
 
   const [form, setForm] = useState({
     fullName: '',
@@ -17,7 +19,7 @@ const Checkout = () => {
     deliveryMethod: '',
     address: '',
     zip: '',
-    promo: ''
+    discount: ''
   });
 
   const isEmailValid = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -31,51 +33,42 @@ const Checkout = () => {
     form.deliveryMethod &&
     form.address;
 
-  // Автозаполнение имени
-  useEffect(() => {
-    if (initDataUnsafe?.user) {
-      setForm(prev => ({
-        ...prev,
-        fullName: `${initDataUnsafe.user.first_name} ${initDataUnsafe.user.last_name || ''}`.trim()
+
+    const handleSubmit = useCallback(async () => {
+      if (!isFormValid || !WebApp) return;
+    
+      const cartItems = cart.map(item => ({
+        title: `${item.brand} ${item.model}`,
+        articul: item.articul,
+        size: item.size,
+        price: item.finalPrice
       }));
-    }
-  }, [initDataUnsafe]);
-
-  // Обработка mainButton
-  useEffect(() => {
-    if (!mainButton) return;
-    if (isFormValid) {
-      mainButton.show();
-      mainButton.setText('Завершить заказ');
-    } else {
-      mainButton.hide();
-    }
-  }, [form, isFormValid]);
-
-  const handleSubmit = useCallback(() => {
-    if (!isFormValid || !WebApp) return;
-
-    const payload = {
-      ...form,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('Заказ оформлен:', payload);
-    WebApp.sendData(JSON.stringify(payload));
-    WebApp.close();
-  }, [form, isFormValid]);
-
-  useEffect(() => {
-    if (!mainButton || !backButton) return;
-
-    mainButton.onClick(handleSubmit);
-    backButton.onClick(() => window.history.back());
-
-    return () => {
-      mainButton.offClick(handleSubmit);
-      backButton.offClick();
-    };
-  }, [handleSubmit]);
+    
+      const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
+    
+      const payload = {
+        ...form,
+        cart: cartItems,
+        total,
+        timestamp: new Date().toISOString()
+      };
+    
+      try {
+        await request('order', 'POST', payload);
+    
+        // Показываем алерт
+        WebApp.showAlert("🎉 Ваш заказ успешно оформлен!");
+    
+        // Очищаем корзину (если хочешь)
+        cart.forEach(item => removeFromCart(item.id_item));
+    
+        navigate('/')
+      } catch (error) {
+        console.error('Ошибка оформления заказа:', error);
+        WebApp.showAlert("❌ Произошла ошибка при оформлении заказа. Попробуйте позже.");
+      }
+    }, [form, isFormValid, WebApp, cart, removeFromCart]);
+    
 
   const handleChange = e => {
     setForm(prev => ({
@@ -84,32 +77,98 @@ const Checkout = () => {
     }));
   };
 
-  return (
-    <div className="checkout-container">
-      <h2>Оформление заказа</h2>
-
-      <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="ФИО" required />
-      <input name="phone" value={form.phone} onChange={handleChange} placeholder="Телефон" required />
+  const renderInput = (label, name, placeholder = '', type = 'text', required = false) => (
+    <div>
+      <label style={{ color: required && !form[name] ? 'red' : '#000' }}>
+        {label}
+      </label>
       <input
-        name="email"
-        value={form.email}
+        name={name}
+        type={type}
+        value={form[name]}
         onChange={handleChange}
-        placeholder="Email"
-        required
-        className={!isEmailValid(form.email) && form.email ? 'invalid' : ''}
+        className={required && !form[name] ? 'input-error' : ''}
+        placeholder={placeholder}
       />
-      <input name="size" value={form.size} onChange={handleChange} placeholder="Размер" required />
-
-      <select name="deliveryMethod" value={form.deliveryMethod} onChange={handleChange} required>
-        <option value="">Способ получения</option>
-        <option value="pickup">Самовывоз</option>
-        <option value="courier">Курьер</option>
-      </select>
-
-      <input name="address" value={form.address} onChange={handleChange} placeholder="Адрес доставки" required />
-      <input name="zip" value={form.zip} onChange={handleChange} placeholder="Почтовый индекс" />
-      <input name="promo" value={form.promo} onChange={handleChange} placeholder="Промокод" />
     </div>
+  );
+
+  return (
+    <section className="section-page">
+      <div className="sticky-header">
+        <TopBar
+          onLogoClick={() => navigate('/')}
+          onCartClick={() => navigate('/cart')}
+        />
+      </div>
+
+      <div className="checkout-container">
+        {cart.length > 0 && (
+          <div className="cart-preview">
+            <h3>Корзина</h3>
+            {cart.map((item, index) => (
+              <div key={index} className="cart-item">
+                <div className="cart-item-info">
+                  <strong>{item.brand} {item.model}</strong>
+                  <div>Артикул: {item.articul}</div>
+                  <div>Размер: {item.size}</div>
+                  <div>Цена: {item.finalPrice} BYN</div>
+                </div>
+                {item.image && (
+                  <img src={item.image} alt={item.title} className="cart-item-image" />
+                )}
+              </div>
+            ))}
+            <div className="cart-total">
+              <strong>Итого:</strong>{' '}
+              {cart.reduce((total, item) => total + item.finalPrice, 0)} BYN
+            </div>
+          </div>
+        )}
+        {renderInput('ФИО получателя', 'fullName', 'Фамилия Имя Отчество', 'text', true)}
+        {renderInput('Телефон', 'phone', '+375 (29) 999-99-99', 'text', true)}
+        <div>
+          <label style={{ color: form.email && !isEmailValid(form.email) ? 'red' : '#000' }}>Email</label>
+          <input
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            className={!isEmailValid(form.email) && form.email ? 'input-error' : ''}
+          />
+        </div>
+        {renderInput('Длина стопы (см)*', 'size', '', 'number', true)}
+
+        <div className='select-form'>
+          <label style={{ color: form.deliveryMethod ? '#000' : 'red' }}>Способ получения</label>
+          <select name="deliveryMethod" value={form.deliveryMethod} onChange={handleChange} required>
+            <option value="">Выберите</option>
+            <option value="Белпочта">Белпочта</option>
+            <option value="Европочта">Европочта</option>
+            <option value="Самовывоз">Самовывоз</option>
+          </select>
+        </div>
+
+        {renderInput('Адрес доставки', 'address', 'Город, Улица, дом, квартира', 'text', true)}
+        {renderInput('Почтовый индекс', 'zip', '210000')}
+        <div className='select-form'>
+          <label>Ваша скидка</label>
+          <select name="discount" value={form.discount} onChange={handleChange} required>
+            <option value="">Выберите</option>
+            <option value="5">5%</option>
+            <option value="7">7%</option>
+            <option value="9">9%</option>
+          </select>
+        </div>
+
+        <button className='back-to-cart'  onClick={() => navigate('/cart')}>Назад в корзину</button>
+
+      </div>
+      <div className="checkout-footer">
+        <button onClick={handleSubmit} disabled={!isFormValid}>
+          {isFormValid ? 'Завершить заказ' : 'Заполните обязательные поля'}
+        </button>
+      </div>
+    </section>
   );
 };
 

@@ -9,6 +9,7 @@
   justify-content: flex-start;
   padding: 0 30px;
   box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
 /* Контейнер с инпутом */
@@ -66,7 +67,7 @@
 
 .select-item,
 .select-brand {
-  width: 250px;
+  width: 200px;
   height: 45px;
   padding: 6px;
   font-size: 16px;
