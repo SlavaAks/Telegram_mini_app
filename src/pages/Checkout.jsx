@@ -51,6 +51,11 @@ const Checkout = () => {
 
     const handleSubmit = useCallback(async () => {
       if (!isFormValid || !WebApp) return;
+      
+      console.log(cart.length)
+      if(cart.length>5){
+        WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
+      }
     
       const cartItems = cart.map(item => ({
         title: `${item.brand} ${item.model}`,
