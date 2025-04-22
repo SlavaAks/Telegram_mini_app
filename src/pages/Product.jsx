@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Product.css";
 import TopBar from '../components/TopBar';
@@ -9,6 +9,22 @@ const Product = ({ onAddToCart }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
+  const WebApp = window.Telegram?.WebApp;
+
+    useEffect(() => {
+      if (WebApp?.BackButton) {
+        WebApp.BackButton.show();
+  
+        WebApp.BackButton.onClick(() => {
+          navigate(-1); // вернуться назад
+        });
+  
+        return () => {
+          WebApp.BackButton.hide(); // скрыть при размонтировании
+          WebApp.BackButton.offClick(); // очистить обработчик
+        };
+      }
+    }, [navigate, WebApp]);
 
   if (!state || !state.product) {
     return <p>Товар не найден</p>;

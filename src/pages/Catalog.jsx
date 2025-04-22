@@ -28,8 +28,8 @@ const Catalog = () => {
 
       const parsed = rawData.map((item) => ({
         id: item[0],
-        brand: item[1],
-        name: item[2],
+        brand: item[1] || '',
+        name: item[2] ? String(item[2]) : '',
         image: item[3],
         availableSizes: item[4].split(','),
         price: parseInt(item[5].replace(/\D/g, ''), 10),
@@ -75,7 +75,12 @@ const Catalog = () => {
     .map(p => p.name))) : []; 
 
   const filteredProducts = products.filter(product => {
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (
+      searchQuery &&
+      !`${product.brand || ''} ${product.name || ''}`.toLowerCase().includes(searchQuery.toLowerCase())
+    ) return false;
+    
+    
     if (categoryFilter !== 'all' && product.category !== categoryFilter) return false;
     if (brandFilter !== 'all' && product.brand !== brandFilter) return false;
     if (modelFilter !== 'all' && product.name !== modelFilter) return false;

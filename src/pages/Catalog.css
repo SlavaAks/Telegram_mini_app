@@ -50,7 +50,7 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 10px;
+  gap: 1px;
   margin-top: 4px;
   padding-bottom: 16px;
   box-sizing: border-box;
@@ -58,7 +58,7 @@
 
 .filter-item {
   flex: 1 1 190px;
-  min-width: 120px;
+  min-width: 110px;
   max-width: 200px;
   min-height: 45px;
   max-height: 100px;
