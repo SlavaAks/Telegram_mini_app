@@ -11,31 +11,64 @@ const Checkout = () => {
   const WebApp = window.Telegram?.WebApp;
 
 
-  useEffect(() => {
-      if (WebApp?.BackButton) {
-        WebApp.BackButton.show();
-  
-        WebApp.BackButton.onClick(() => {
-          navigate(-1); // вернуться назад
-        });
-  
-        return () => {
-          WebApp.BackButton.hide(); // скрыть при размонтировании
-          WebApp.BackButton.offClick(); // очистить обработчик
-        };
-      }
-    }, [navigate, WebApp]);
+  const getFormvalues = ()=>{
+    const storedValues =localStorage.getItem('checkoutForm')
+    if (!storedValues) return {
+      fullName: '',
+      phone: '',
+      email: '',
+      size: '',
+      deliveryMethod: '',
+      address: '',
+      zip: '',
+      discount: ''
+    }
+  return JSON.parse(storedValues);
+  }
 
-  const [form, setForm] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    size: '',
-    deliveryMethod: '',
-    address: '',
-    zip: '',
-    discount: ''
-  });
+  const [form, setForm] = useState(getFormvalues)
+
+  // Загрузка данных из localStorage при монтировании компонента
+  useEffect(() => {
+    const savedForm = localStorage.getItem('checkoutForm');
+    if (savedForm) {
+      try {
+        const parsedForm = JSON.parse(savedForm);
+        // Только если данные корректны, устанавливаем их в состояние
+        if (parsedForm && typeof parsedForm === 'object') {
+          setForm(parsedForm);
+        }
+      } catch (error) {
+        console.warn('Ошибка парсинга данных из localStorage:', error);
+      }
+    }
+  }, []);
+
+  // Сохранение данных в localStorage при изменении состояния
+  useEffect(() => {
+    if (form) {
+      localStorage.setItem('checkoutForm', JSON.stringify(form));
+    }
+  }, [form]);
+
+
+  useEffect(() => {
+    if (WebApp?.BackButton) {
+      WebApp.BackButton.show();
+
+      WebApp.BackButton.onClick(() => {
+        navigate(-1); // вернуться назад
+      });
+
+      return () => {
+        WebApp.BackButton.hide(); // скрыть при размонтировании
+        WebApp.BackButton.offClick(); // очистить обработчик
+      };
+    }
+  }, [navigate, WebApp]);
+
+
+
 
   const isEmailValid = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -49,46 +82,47 @@ const Checkout = () => {
     form.address;
 
 
-    const handleSubmit = useCallback(async () => {
-      if (!isFormValid || !WebApp) return;
-      
-      console.log(cart.length)
-      if(cart.length>5){
-        WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
-      }
-    
-      const cartItems = cart.map(item => ({
-        title: `${item.brand} ${item.model}`,
-        articul: item.articul,
-        size: item.size,
-        price: item.finalPrice
-      }));
-    
-      const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
-    
-      const payload = {
-        ...form,
-        cart: cartItems,
-        total,
-        timestamp: new Date().toISOString()
-      };
-    
-      try {
-        await request('order', 'POST', payload);
-    
-        // Показываем алерт
-        WebApp.showAlert("🎉 Ваш заказ успешно оформлен!");
-    
-        // Очищаем корзину (если хочешь)
-        cart.forEach(item => removeFromCart(item.id_item));
-    
-        navigate('/')
-      } catch (error) {
-        console.error('Ошибка оформления заказа:', error);
-        WebApp.showAlert("❌ Произошла ошибка при оформлении заказа. Попробуйте позже.");
-      }
-    }, [form, isFormValid, WebApp, cart, removeFromCart]);
-    
+  const handleSubmit = useCallback(async () => {
+    if (!isFormValid || !WebApp) return;
+
+    console.log(cart.length)
+    if (cart.length > 5) {
+      WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
+      return;
+    }
+
+    const cartItems = cart.map(item => ({
+      title: `${item.brand} ${item.model}`,
+      articul: item.articul,
+      size: item.size,
+      price: item.finalPrice
+    }));
+
+    const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
+
+    const payload = {
+      ...form,
+      cart: cartItems,
+      total,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      await request('order', 'POST', payload);
+
+      // Показываем алерт
+      WebApp.showAlert("🎉 Ваш заказ успешно оформлен!");
+
+      // Очищаем корзину (если хочешь)
+      cart.forEach(item => removeFromCart(item.id_item));
+
+      navigate('/')
+    } catch (error) {
+      console.error('Ошибка оформления заказа:', error);
+      WebApp.showAlert("❌ Произошла ошибка при оформлении заказа. Попробуйте позже.");
+    }
+  }, [form, isFormValid, WebApp, cart, removeFromCart]);
+
 
   const handleChange = e => {
     setForm(prev => ({
@@ -180,7 +214,7 @@ const Checkout = () => {
           </select>
         </div>
 
-        <button className='back-to-cart'  onClick={() => navigate('/cart')}>Назад в корзину</button>
+        <button className='back-to-cart' onClick={() => navigate('/cart')}>Назад в корзину</button>
 
       </div>
       <div className="checkout-footer">

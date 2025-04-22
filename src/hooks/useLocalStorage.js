@@ -1,16 +1,21 @@
 import { useState } from 'react';
 
 function useLocalStorage(key, initialValue) {
-  // Получаем данные из localStorage при первом рендере
-  const storedValue = localStorage.getItem(key);
+  let parsedValue;
 
-  // Если данные есть, то используем их, иначе — начальное значение
-  const [value, setValue] = useState(storedValue ? JSON.parse(storedValue) : initialValue);
+  try {
+    const stored = localStorage.getItem(key);
+    parsedValue = stored ? JSON.parse(stored) : initialValue;
+  } catch (error) {
+    console.warn(`Ошибка чтения localStorage для ключа "${key}":`, error);
+    parsedValue = initialValue;
+  }
 
-  // Обновляем localStorage, когда значение меняется
+  const [value, setValue] = useState(parsedValue);
+
   const setStoredValue = (newValue) => {
     setValue(newValue);
-    localStorage.setItem(key, JSON.stringify(newValue)); // сохраняем в localStorage
+    localStorage.setItem(key, JSON.stringify(newValue));
   };
 
   return [value, setStoredValue];

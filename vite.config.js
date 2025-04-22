@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'thongs-mem-flashing-overview.trycloudflare.com'
+      'on-to-conflict-litigation.trycloudflare.com'
     ]
   }
 });
