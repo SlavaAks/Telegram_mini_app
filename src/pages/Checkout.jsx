@@ -11,6 +11,21 @@ const Checkout = () => {
   const WebApp = window.Telegram?.WebApp;
 
 
+  useEffect(() => {
+      if (WebApp?.BackButton) {
+        WebApp.BackButton.show();
+  
+        WebApp.BackButton.onClick(() => {
+          navigate(-1); // вернуться назад
+        });
+  
+        return () => {
+          WebApp.BackButton.hide(); // скрыть при размонтировании
+          WebApp.BackButton.offClick(); // очистить обработчик
+        };
+      }
+    }, [navigate, WebApp]);
+
   const [form, setForm] = useState({
     fullName: '',
     phone: '',

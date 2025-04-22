@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import './Cart.css';
@@ -8,6 +8,23 @@ import TopBar from '../components/TopBar';
 const Cart = () => {
   const { cart, removeFromCart } = useCart();
   const navigate = useNavigate();
+  const WebApp = window.Telegram?.WebApp;
+
+  useEffect(() => {
+    if (WebApp?.BackButton) {
+      WebApp.BackButton.show();
+
+      WebApp.BackButton.onClick(() => {
+        navigate(-1); // вернуться назад
+      });
+
+      return () => {
+        WebApp.BackButton.hide(); // скрыть при размонтировании
+        WebApp.BackButton.offClick(); // очистить обработчик
+      };
+    }
+  }, [navigate, WebApp]);
+
   return (
     <div className="cart-page">
       <TopBar
