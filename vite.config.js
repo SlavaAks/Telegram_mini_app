@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'on-to-conflict-litigation.trycloudflare.com'
+      'verde-childhood-tea-du.trycloudflare.com'
     ]
   }
 });

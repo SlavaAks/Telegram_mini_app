@@ -11,8 +11,8 @@ const Checkout = () => {
   const WebApp = window.Telegram?.WebApp;
 
 
-  const getFormvalues = ()=>{
-    const storedValues =localStorage.getItem('checkoutForm')
+  const getFormvalues = () => {
+    const storedValues = localStorage.getItem('checkoutForm')
     if (!storedValues) return {
       fullName: '',
       phone: '',
@@ -20,10 +20,12 @@ const Checkout = () => {
       size: '',
       deliveryMethod: '',
       address: '',
+      city: '',
+      branchNumber: '',
       zip: '',
       discount: ''
     }
-  return JSON.parse(storedValues);
+    return JSON.parse(storedValues);
   }
 
   const [form, setForm] = useState(getFormvalues)
@@ -70,22 +72,20 @@ const Checkout = () => {
 
 
 
-  const isEmailValid = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const isFormValid =
     form.fullName &&
     form.phone &&
-    form.email &&
-    isEmailValid(form.email) &&
     form.size &&
     form.deliveryMethod &&
-    form.address;
+    ((form.deliveryMethod === 'Белпочта' && form.address) ||
+    (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
+    (form.deliveryMethod === 'Самовывоз' && form.city));
 
 
   const handleSubmit = useCallback(async () => {
     if (!isFormValid || !WebApp) return;
 
-    console.log(cart.length)
     if (cart.length > 5) {
       WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
       return;
@@ -181,15 +181,6 @@ const Checkout = () => {
         )}
         {renderInput('ФИО получателя', 'fullName', 'Фамилия Имя Отчество', 'text', true)}
         {renderInput('Телефон', 'phone', '+375 (29) 999-99-99', 'text', true)}
-        <div>
-          <label style={{ color: form.email && !isEmailValid(form.email) ? 'red' : '#000' }}>Email</label>
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            className={!isEmailValid(form.email) && form.email ? 'input-error' : ''}
-          />
-        </div>
         {renderInput('Длина стопы (см)*', 'size', '', 'number', true)}
 
         <div className='select-form'>
@@ -202,8 +193,30 @@ const Checkout = () => {
           </select>
         </div>
 
-        {renderInput('Адрес доставки', 'address', 'Город, Улица, дом, квартира', 'text', true)}
-        {renderInput('Почтовый индекс', 'zip', '210000')}
+        {form.deliveryMethod === 'Белпочта' && (
+          <>
+            {renderInput('Адрес доставки', 'address', 'Город, Улица, дом, квартира', 'text', true)}
+            {renderInput('Почтовый индекс', 'zip', '210000')}
+          </>
+        )}
+
+        {form.deliveryMethod === 'Европочта' && (
+          <>
+            {renderInput('Номер отделения Европочты', 'branchNumber', 'Например: 12', 'text', true)}
+          </>
+        )}
+        {form.deliveryMethod === 'Самовывоз' && (
+          <>
+            <div className='select-form'>
+              <label style={{ color: form.city ? '#000' : 'red' }}>Город Минск/Витебск</label>
+              <select name="city" value={form.city} onChange={handleChange} required>
+                <option value="">Выберите</option>
+                <option value="Минск">Минск</option>
+                <option value="Витебск">Витебск</option>
+              </select>
+            </div>
+          </>
+        )}
         <div className='select-form'>
           <label>Ваша скидка</label>
           <select name="discount" value={form.discount} onChange={handleChange} required>
