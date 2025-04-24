@@ -104,7 +104,10 @@ const Checkout = () => {
       ...form,
       cart: cartItems,
       total,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      telegram_link: WebApp.initDataUnsafe?.user?.id
+  ? `https://t.me/${WebApp.initDataUnsafe.user.username || `user?id=${WebApp.initDataUnsafe.user.id}`}`
+  : null,
     };
 
     try {

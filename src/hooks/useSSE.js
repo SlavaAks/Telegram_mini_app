@@ -10,9 +10,7 @@ const useSSE = (onUpdate) => {
 
         eventSourceRef.current.close();
       }
-      // console.log(`${import.meta.env.VITE_API_URL}/sse`)
-      // const es = new EventSource(`${import.meta.env.VITE_API_URL}/sse`);
-      const es = new EventSource(`http://localhost:8080/sse`);
+      const es = new EventSource(`${import.meta.env.VITE_API_URL}/sse`);
       eventSourceRef.current = es;
 
       es.onopen = () => {

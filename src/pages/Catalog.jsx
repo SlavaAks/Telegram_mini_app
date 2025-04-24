@@ -96,7 +96,7 @@ const Catalog = () => {
     navigate(`/product/${product.id}`, { state: { product } });
   };
 
-  const shoesSize = Array.from({ length: 15 }, (_, i) => (35 + i).toString())
+  const shoesSize = Array.from({ length: 7 }, (_, i) => (40 + i).toString())
   const clothesSize  =['XS', 'S', 'M', 'L', 'XL', 'XXL','XXXL']
   const allSizes =
   categoryFilter === 'shoes'
