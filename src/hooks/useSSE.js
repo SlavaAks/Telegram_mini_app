@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import request from '../utils/api.ts';
 
 const useSSE = (onUpdate) => {
   const eventSourceRef = useRef(null);
@@ -13,10 +14,25 @@ const useSSE = (onUpdate) => {
       const es = new EventSource(`${import.meta.env.VITE_API_URL}/sse/`);
       eventSourceRef.current = es;
 
-      es.onopen = () => {
+      es.onopen = async () => {
         console.log("[SSE] Connected");
-	onUpdate();
-      };
+	try {
+        const res = await request('last-updated');
+        const { last_updated } = res.data
+
+        const localUpdated = localStorage.getItem('last_updated');
+        const isOutdated = !localUpdated || new Date(last_updated) > new Date(localUpdated);
+
+        if (isOutdated) {
+          console.log("🔄 Обновляем данные по SSE");
+          await onUpdate();
+        } else {
+          console.log("✅ Данные локально актуальны");
+        }
+      } catch (e) {
+        console.warn("⚠️ Ошибка при проверке обновлений через SSE:", e);
+      }
+    };
 
       es.onmessage = (event) => {
         console.log("[SSE] Raw event:", event.data);
