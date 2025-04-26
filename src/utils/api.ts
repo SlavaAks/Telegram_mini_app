@@ -1,7 +1,7 @@
 import axios from "axios";
 import { initData } from "@telegram-apps/sdk";
 
-const BASE_API_URL = 'https://29a8c288d84da0bb77bd007eb3e28758.serveo.net'
+const BASE_API_URL = import.meta.env.VITE_API_URL
 
 const request = async (endpoint: string, method: string = "GET", data?:any) =>{
     const response = await axios.request({

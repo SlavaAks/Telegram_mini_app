@@ -1,0 +1,41 @@
+.cart-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cart-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .cart-info {
+    flex: 1;
+  }
+  
+  .cart-image {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+  
+  
+  .remove-link {
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.3s ease, transform 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent; /* Начальная прозрачная рамка */
+    padding: 2px 6px; /* Добавим немного отступов, чтобы рамка не была слишком близко к тексту */
+    border-radius: 4px; /* Закругленные углы рамки */
+  }
+  
+  .remove-link:hover {
+    color: #c9302c;  /* Цвет при наведении */
+    transform: scale(1.1);  /* Легкое увеличение кнопки */
+    border-color: #ccc;  /* Цвет серой рамки при наведении */
+  }

@@ -49,7 +49,7 @@
 .size-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
 }
 
 .size-wrapper {
@@ -59,25 +59,28 @@
 
 .size-btn {
   padding: 10px 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #bbafaf;
   border-radius: 8px;
   cursor: pointer;
   background: white;
+  color: black;
   transition: 0.2s;
-  font-size: 16px;
+  font-size: 13px;
+  width: 50px;
+  height: 35px;
 }
 
 .size-btn.active {
-  background: #007bff;
+  background: #7232d2;
   color: white;
-  border-color: #007bff;
+  border-color: #7232d2;
 }
 
 .discount-badge {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: red;
+  background: linear-gradient(270deg, #b3267a, #b106f0); /* Цвета градиента */;
   color: white;
   font-size: 10px;
   font-weight: bold;
@@ -87,7 +90,7 @@
 
 .buy-btn {
   padding: 12px 20px;
-  background-color: #28a745;
+  background-color: #7232d2;
   color: white;
   font-weight: bold;
   border: none;

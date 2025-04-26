@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Product.css";
 import TopBar from '../components/TopBar';
+import { useCart } from '../context/CartContext';
 
 const Product = ({ onAddToCart }) => {
+  const { addToCart } = useCart();
   const { state } = useLocation();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
+  const WebApp = window.Telegram?.WebApp;
+
+    useEffect(() => {
+      if (WebApp?.BackButton) {
+        WebApp.BackButton.show();
+  
+        WebApp.BackButton.onClick(() => {
+          navigate(-1); // вернуться назад
+        });
+  
+        return () => {
+          WebApp.BackButton.hide(); // скрыть при размонтировании
+          WebApp.BackButton.offClick(); // очистить обработчик
+        };
+      }
+    }, [navigate, WebApp]);
 
   if (!state || !state.product) {
     return <p>Товар не найден</p>;
@@ -30,11 +48,7 @@ const Product = ({ onAddToCart }) => {
     : price;
 
 
-  const handleAddToCartClick = () => {
-      if (selectedSize) {
-        onAddToCart();  // Вызываем метод для обновления количества товаров в корзине
-      }
-    };
+
   return (
     <div className="product-page">
       <div className="top-bar-wrapper">
@@ -82,7 +96,7 @@ const Product = ({ onAddToCart }) => {
       <button
         className="buy-btn"
         disabled={!selectedSize}
-        onClick={handleAddToCartClick}
+      onClick={() => addToCart({id,selectedSize,finalPrice,brand,name,image})}
       >
         Добавить в корзину 😌
       </button>
