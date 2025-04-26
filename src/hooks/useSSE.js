@@ -10,7 +10,7 @@ const useSSE = (onUpdate) => {
 
         eventSourceRef.current.close();
       }
-      const es = new EventSource(`${import.meta.env.VITE_API_URL}/sse`);
+      const es = new EventSource(`${import.meta.env.VITE_API_URL}/sse/`);
       eventSourceRef.current = es;
 
       es.onopen = () => {
