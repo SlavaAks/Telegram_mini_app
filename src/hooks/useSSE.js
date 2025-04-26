@@ -39,6 +39,7 @@ const useSSE = (onUpdate) => {
         if (event.data === "update") {
           console.log("[SSE] Received update");
           onUpdate();
+	  localStorage.setItem('last_updated', new Date().toISOString());
         } else {
           console.log("[SSE] Keep-alive/ping received");
         }
