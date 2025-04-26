@@ -26,6 +26,7 @@ const useSSE = (onUpdate) => {
         if (isOutdated) {
           console.log("🔄 Обновляем данные по SSE");
           await onUpdate();
+	  localStorage.setItem('last_updated', new Date().toISOString());
         } else {
           console.log("✅ Данные локально актуальны");
         }
