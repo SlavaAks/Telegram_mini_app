@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import ProductCard from '../components/ProductCard';
 import useLocalStorage from '../hooks/useLocalStorage';  // Хук для localStorag
 import useSSE from '../hooks/useSSE'
 import request from '../utils/api.ts';
 import './Catalog.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Catalog = () => {
   const navigate = useNavigate();
@@ -56,10 +57,11 @@ const Catalog = () => {
       setLoading(false); // Если данные уже загружены, убираем состояние загрузки
     }
   }, [products]); // Этот эффект срабатывает только при изменении состояния продуктов
-  
+
   useEffect(() => {
     setBrandFilter('all')
     setModelFilter('all')
+    setSizeFilter('all')
   }, [categoryFilter,]); // Зависимости для изменения фильтров
 
   const availableBrands = Array.from(
@@ -70,17 +72,17 @@ const Catalog = () => {
     )
   );
   const availableModels = brandFilter !== 'all'
-  ? Array.from(new Set(products
-    .filter(p => p.brand === brandFilter && (p.category === categoryFilter || categoryFilter === 'all'))
-    .map(p => p.name))) : []; 
+    ? Array.from(new Set(products
+      .filter(p => p.brand === brandFilter && (p.category === categoryFilter || categoryFilter === 'all'))
+      .map(p => p.name))) : [];
 
   const filteredProducts = products.filter(product => {
     if (
       searchQuery &&
       !`${product.brand || ''} ${product.name || ''}`.toLowerCase().includes(searchQuery.toLowerCase())
     ) return false;
-    
-    
+
+
     if (categoryFilter !== 'all' && product.category !== categoryFilter) return false;
     if (brandFilter !== 'all' && product.brand !== brandFilter) return false;
     if (modelFilter !== 'all' && product.name !== modelFilter) return false;
@@ -97,13 +99,13 @@ const Catalog = () => {
   };
 
   const shoesSize = Array.from({ length: 7 }, (_, i) => (40 + i).toString())
-  const clothesSize  =['XS', 'S', 'M', 'L', 'XL', 'XXL','XXXL']
+  const clothesSize = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
   const allSizes =
-  categoryFilter === 'shoes'
-    ? shoesSize
-    : categoryFilter === 'clothes'
-    ? clothesSize
-    : [...clothesSize, ...shoesSize];
+    categoryFilter === 'shoes'
+      ? shoesSize
+      : categoryFilter === 'clothes'
+        ? clothesSize
+        : [...clothesSize, ...shoesSize];
 
 
   const categoryLabels = {
@@ -138,9 +140,9 @@ const Catalog = () => {
           >
             <option value="all">Все категории</option>
             {allCategory.map(category => (
-                <option key={category} value={category}>
-                        {categoryLabels[category] || category}
-                </option>
+              <option key={category} value={category}>
+                {categoryLabels[category] || category}
+              </option>
             ))}
           </select>
         </div>
@@ -177,41 +179,58 @@ const Catalog = () => {
           </div>
         )}
 
-        <div className='filter-item'>
+        <div className="filter-item">
           <button
             className={`discount-button ${discountOnly ? 'active' : ''}`}
             onClick={() => setDiscountOnly(prev => !prev)}
           >
-            {discountOnly ? 'Все товары' : 'Cо скидкой'}
+            {discountOnly ? 'Все товары' : 'Со скидкой'}
           </button>
         </div>
 
-        {/* <div className="filter-item"> */}
-        <div className="size-buttons">
-          {allSizes.map(size => (
-            <button
-              key={size}
-              className={`size-button ${sizeFilter === size ? 'selected' : ''}`}
-              onClick={() => setSizeFilter(sizeFilter === size ? 'all' : size)}
-            >
-              {size}
-            </button>
-          ))}
+        <div className="filter-item">
+          <button
+            className={`allsize-button ${sizeFilter !== 'all' ? '' : 'active'}`}
+            onClick={() => setSizeFilter('all')}
+          >
+            Все размеры
+          </button>
         </div>
       </div>
-      {/* </div> */}
 
+      {/* Сюда отдельно список кнопок размеров */}
+      <div className="size-buttons">
+        {allSizes.map(size => (
+          <button
+            key={size}
+            className={`size-button ${sizeFilter === size ? 'selected' : ''}`}
+            onClick={() => setSizeFilter(sizeFilter === size ? 'all' : size)}
+          >
+            {size}
+          </button>
+        ))}
+      </div>
       <div className="product-list">
         {loading ? (
           <p>Загрузка товаров...</p>
         ) : filteredProducts.length > 0 ? (
-          filteredProducts.map(product => (
-            <ProductCard
-              key={product.id}
-              {...product}
-              onClick={() => handleClick(product)}
-            />
-          ))
+          <AnimatePresence>
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                style={{ width: '100%' }} // добавляем ширину!
+              >
+                <ProductCard
+                  {...product}
+                  onClick={() => handleClick(product)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         ) : (
           <p>Ничего не нашлось</p>
         )}

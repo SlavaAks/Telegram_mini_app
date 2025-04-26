@@ -1,134 +1,54 @@
-/* Главная секция-контейнер */
-.section-page {
-  min-height: 100%;
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  padding: 0 30px;
-  box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
-}
-
-/* Контейнер с инпутом */
-.div-input {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  min-height: 30px;
-  max-height: 30%;
-  background: white;
-  z-index: 10;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
-}
-
-/* Поле поиска */
-.text-field {
-  width: 100%;
-  font-size: 16px;
-  
-  min-height: 30px;
-  max-height: 100%;
-  border-radius: 9px;
-  border: 1px solid #ccc;
-  outline: none;
-  box-shadow: 3px 2px 5px 0 rgba(82, 5, 237, 0.2);
-  box-sizing: border-box;
-}
-
-.text-field:focus {
-  border: 1px solid #007bff;
-  box-shadow: 0 0 4px #007bff;
-}
-
 /* Контейнер с фильтрами */
 .div-filter {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 1px;
+  gap: 8px;  /* Увеличено расстояние между элементами */
   margin-top: 4px;
-  padding-bottom: 16px;
+  margin-bottom: 16px; /* Добавлен отступ снизу, чтобы кнопки не сливались с товаром */
   box-sizing: border-box;
 }
 
+/* Каждый фильтр */
 .filter-item {
-  flex: 1 1 190px;
-  min-width: 110px;
-  max-width: 200px;
-  min-height: 45px;
-  max-height: 100px;
-  font-size: 16px;
+  flex: 1 1 100px;
+  min-width: 80px; /* Минимальная ширина */
+  display: flex;
+  justify-content:flex-start; /* Центрируем контент */
+  align-items: flex-start;
+  gap: 2px;  /* Между элементами в фильтре */
 }
 
+/* Для селектов и кнопок */
 .select-item,
-.select-brand {
-  width: 200px;
-  height: 45px;
+.select-brand,
+.discount-button,
+.allsize-button,
+.size-button {
+  width: 100%;
+  height: 40px;
   padding: 6px;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 12px;
   border: 1px solid #ccc;
-  outline: none;
   box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
 .select-item:focus,
 .select-brand:focus {
-  border: 1px solid #007bff;
+  border-color: #007bff;
 }
 
-
-/* Кнопки размеров */
-.size-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px!important;
-}
-
-.size-button {
-  background-color: #7232d2;
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  width:55px;
-  height: 40px;
-  
-}
+.discount-button:hover,
 .size-button:hover {
-  background-color: #844bd8;
-}
-
-.size-button.selected {
-  background-color: #ffffff;
-  color: black;             /* Чёрный текст */
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #b106f0;
-}
-
-/* кнопка все товары или со скидкой */
-
-.discount-button {
-  padding: 6px 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  width: 150px;
-  height: 40px;
- 
-  background: linear-gradient(270deg, #b3267a, #b106f0); /* Цвета градиента */
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-}
-
-.discount-button:hover {
   background-color: #e0e0e0;
+}
+
+/* Кнопки со скидкой */
+.discount-button {
+  background: linear-gradient(270deg, #b3267a, #b106f0);
 }
 
 .discount-button.active {
@@ -137,11 +57,55 @@
   font-weight: 500;
 }
 
-/* Список товаров */
-.product-list {
+
+.allsize-button {
+  background: #7232d2;
+}
+
+.allsize-button.active {
+  border: 1px solid #c3c3c3; /* Фиолетовая красивая рамка */
+  background-color: #ffffff;
+  font-weight: 500;
+  color: black;
+}
+
+/* Кнопки размеров */
+.size-buttons {
   display: flex;
   flex-wrap: wrap;
+  gap: 4px !important;
+  width: 100%;
+  margin-top: 2px; /* Расстояние сверху от фильтров */
+  margin-bottom: 16px; /* Убираем перекрытие с товарами */
+}
+
+/* Размеры кнопок */
+.size-button {
+  background-color: #7232d2;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  width: 55px;
+  height: 40px;
+}
+
+.size-button:hover {
+  background-color: #844bd8;
+}
+
+.size-button.selected {
+  background-color: #ffffff;
+  color: black;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #b106f0;
+}
+
+/* Список товаров */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 12px;
-  justify-content: center;
-  padding: 16px;
+  margin-top: 16px; /* Отступ сверху, чтобы товар не прижимался к фильтрам */
 }

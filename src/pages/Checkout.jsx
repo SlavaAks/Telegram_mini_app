@@ -9,7 +9,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart } = useCart();
   const WebApp = window.Telegram?.WebApp;
-
+  window.Telegram?.WebApp.disableVerticalSwipes();
 
   const getFormvalues = () => {
     const storedValues = localStorage.getItem('checkoutForm')
@@ -79,8 +79,8 @@ const Checkout = () => {
     form.size &&
     form.deliveryMethod &&
     ((form.deliveryMethod === 'Белпочта' && form.address) ||
-    (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
-    (form.deliveryMethod === 'Самовывоз' && form.city));
+      (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
+      (form.deliveryMethod === 'Самовывоз' && form.city));
 
 
   const handleSubmit = useCallback(async () => {
@@ -106,8 +106,8 @@ const Checkout = () => {
       total,
       timestamp: new Date().toISOString(),
       telegram_link: WebApp.initDataUnsafe?.user?.id
-  ? `https://t.me/${WebApp.initDataUnsafe.user.username || `user?id=${WebApp.initDataUnsafe.user.id}`}`
-  : null,
+        ? `https://t.me/${WebApp.initDataUnsafe.user.username || `user?id=${WebApp.initDataUnsafe.user.id}`}`
+        : null,
     };
 
     try {
@@ -133,6 +133,19 @@ const Checkout = () => {
       [e.target.name]: e.target.value
     }));
   };
+
+  if (window.Telegram) {
+    window.Telegram.WebApp.onEvent('keyboard_opened', () => {
+      // Применить стили для корректного отображения форм
+      WebApp.showAlert("🎉 работаем нахуй!");
+      document.querySelector('.scrollable-content').style.paddingBottom = '120px'; // Измените на нужное значение
+    });
+  
+    window.Telegram.WebApp.onEvent('keyboard_closed', () => {
+      // Вернуть нормальное состояние
+      document.querySelector('.scrollable-content').style.paddingBottom = '0';
+    });
+  }
 
   const renderInput = (label, name, placeholder = '', type = 'text', required = false) => (
     <div>
@@ -184,7 +197,18 @@ const Checkout = () => {
         )}
         {renderInput('ФИО получателя', 'fullName', 'Фамилия Имя Отчество', 'text', true)}
         {renderInput('Телефон', 'phone', '+375 (29) 999-99-99', 'text', true)}
-        {renderInput('Длина стопы (см)*', 'size', '', 'number', true)}
+
+        <div className='select-form'>
+          <label style={{ color: form.size ? '#000' : 'red' }}>Размер ступни (см)</label>
+          <select name="size" value={form.size} onChange={handleChange} required>
+            <option value="">Выберите</option>
+            <option value="26">26 см</option>
+            <option value="26.5">26.5 см</option>
+            <option value="27.5">27.5 см</option>
+            <option value="28">28 см</option>
+            <option value="29">29 см</option>
+          </select>
+        </div>
 
         <div className='select-form'>
           <label style={{ color: form.deliveryMethod ? '#000' : 'red' }}>Способ получения</label>
@@ -205,7 +229,7 @@ const Checkout = () => {
 
         {form.deliveryMethod === 'Европочта' && (
           <>
-            {renderInput('Номер отделения Европочты', 'branchNumber', 'Например: 12', 'text', true)}
+            {renderInput('Номер или адрес отделения Европочты', 'branchNumber', 'Например: 12', 'text', true)}
           </>
         )}
         {form.deliveryMethod === 'Самовывоз' && (

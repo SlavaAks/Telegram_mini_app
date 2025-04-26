@@ -13,7 +13,6 @@ const useCart = () => {
   }, [cart]);
 
   const addToCart = ({ id, selectedSize, finalPrice, brand, name, image }) => {
-    console.log("add to cart",{ id, selectedSize, finalPrice, brand, name, image })
     setCart((prev) => {
       const nextId = prev.length > 0 ? prev[prev.length - 1].id_item + 1 : 1;
       const product = {

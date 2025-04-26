@@ -2,7 +2,6 @@ import React from 'react';
 import './CartItem.css';
 
 const CartItem = ({ item, onRemove }) => {
-    console.log(item)
   return (
     <div className="cart-card">
       <div className="cart-card-content">

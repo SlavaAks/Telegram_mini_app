@@ -1,4 +1,4 @@
-body, html {
+/* body, html {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -7,4 +7,23 @@ body, html {
     overflow-y: auto;
     overflow-x: hidden; 
 
+  } */
+  html {
+    font-size: 14px;
+    touch-action: none;
+    height: 100lvh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+
+  body {
+    height: 100lvh;
+    overflow: hidden;
+  }
+
+  #app {
+
+    height: 100%;
+    width: 100%;
   }
