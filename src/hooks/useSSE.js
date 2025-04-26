@@ -15,6 +15,7 @@ const useSSE = (onUpdate) => {
 
       es.onopen = () => {
         console.log("[SSE] Connected");
+	onUpdate();
       };
 
       es.onmessage = (event) => {
