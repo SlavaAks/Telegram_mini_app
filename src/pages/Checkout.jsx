@@ -4,15 +4,17 @@ import TopBar from '../components/TopBar';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import request from '../utils/api.ts';
+import { useTelegramViewport } from '../hooks/useTelegramViewport';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart } = useCart();
   const WebApp = window.Telegram?.WebApp;
+  const viewportHeight = useTelegramViewport();
   window.Telegram?.WebApp.disableVerticalSwipes();
 
   const getFormvalues = () => {
-    const storedValues = localStorage.getItem('checkoutForm')
+    const storedValues = localStorage.getItem('checkoutForm');
     if (!storedValues) return {
       fullName: '',
       phone: '',
@@ -24,19 +26,17 @@ const Checkout = () => {
       branchNumber: '',
       zip: '',
       discount: ''
-    }
+    };
     return JSON.parse(storedValues);
-  }
+  };
 
-  const [form, setForm] = useState(getFormvalues)
+  const [form, setForm] = useState(getFormvalues);
 
-  // Загрузка данных из localStorage при монтировании компонента
   useEffect(() => {
     const savedForm = localStorage.getItem('checkoutForm');
     if (savedForm) {
       try {
         const parsedForm = JSON.parse(savedForm);
-        // Только если данные корректны, устанавливаем их в состояние
         if (parsedForm && typeof parsedForm === 'object') {
           setForm(parsedForm);
         }
@@ -46,32 +46,22 @@ const Checkout = () => {
     }
   }, []);
 
-  // Сохранение данных в localStorage при изменении состояния
   useEffect(() => {
     if (form) {
       localStorage.setItem('checkoutForm', JSON.stringify(form));
     }
   }, [form]);
 
-
   useEffect(() => {
     if (WebApp?.BackButton) {
       WebApp.BackButton.show();
-
-      WebApp.BackButton.onClick(() => {
-        navigate(-1); // вернуться назад
-      });
-
+      WebApp.BackButton.onClick(() => navigate(-1));
       return () => {
-        WebApp.BackButton.hide(); // скрыть при размонтировании
-        WebApp.BackButton.offClick(); // очистить обработчик
+        WebApp.BackButton.hide();
+        WebApp.BackButton.offClick();
       };
     }
   }, [navigate, WebApp]);
-
-
-
-
 
   const isFormValid =
     form.fullName &&
@@ -82,12 +72,11 @@ const Checkout = () => {
       (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
       (form.deliveryMethod === 'Самовывоз' && form.city));
 
-
   const handleSubmit = useCallback(async () => {
     if (!isFormValid || !WebApp) return;
 
     if (cart.length > 5) {
-      WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
+      WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не более 5 товаров");
       return;
     }
 
@@ -112,20 +101,14 @@ const Checkout = () => {
 
     try {
       await request('order', 'POST', payload);
-
-      // Показываем алерт
       WebApp.showAlert("🎉 Ваш заказ успешно оформлен!");
-
-      // Очищаем корзину (если хочешь)
       cart.forEach(item => removeFromCart(item.id_item));
-
-      navigate('/')
+      navigate('/');
     } catch (error) {
       console.error('Ошибка оформления заказа:', error);
       WebApp.showAlert("❌ Произошла ошибка при оформлении заказа. Попробуйте позже.");
     }
   }, [form, isFormValid, WebApp, cart, removeFromCart]);
-
 
   const handleChange = e => {
     setForm(prev => ({
@@ -133,19 +116,6 @@ const Checkout = () => {
       [e.target.name]: e.target.value
     }));
   };
-
-  if (window.Telegram) {
-    window.Telegram.WebApp.onEvent('keyboard_opened', () => {
-      // Применить стили для корректного отображения форм
-      WebApp.showAlert("🎉 работаем нахуй!");
-      document.querySelector('.scrollable-content').style.paddingBottom = '120px'; // Измените на нужное значение
-    });
-  
-    window.Telegram.WebApp.onEvent('keyboard_closed', () => {
-      // Вернуть нормальное состояние
-      document.querySelector('.scrollable-content').style.paddingBottom = '0';
-    });
-  }
 
   const renderInput = (label, name, placeholder = '', type = 'text', required = false) => (
     <div>
@@ -164,7 +134,7 @@ const Checkout = () => {
   );
 
   return (
-    <section className="section-page">
+    <section className="section-page-checkout" style={{ height: viewportHeight }}>
       <div className="sticky-header">
         <TopBar
           onLogoClick={() => navigate('/')}
@@ -233,20 +203,19 @@ const Checkout = () => {
           </>
         )}
         {form.deliveryMethod === 'Самовывоз' && (
-          <>
-            <div className='select-form'>
-              <label style={{ color: form.city ? '#000' : 'red' }}>Город Минск/Витебск</label>
-              <select name="city" value={form.city} onChange={handleChange} required>
-                <option value="">Выберите</option>
-                <option value="Минск">Минск</option>
-                <option value="Витебск">Витебск</option>
-              </select>
-            </div>
-          </>
+          <div className='select-form'>
+            <label style={{ color: form.city ? '#000' : 'red' }}>Город Минск/Витебск</label>
+            <select name="city" value={form.city} onChange={handleChange} required>
+              <option value="">Выберите</option>
+              <option value="Минск">Минск</option>
+              <option value="Витебск">Витебск</option>
+            </select>
+          </div>
         )}
+
         <div className='select-form'>
           <label>Ваша скидка</label>
-          <select name="discount" value={form.discount} onChange={handleChange} required>
+          <select name="discount" value={form.discount} onChange={handleChange}>
             <option value="">Выберите</option>
             <option value="5">5%</option>
             <option value="7">7%</option>
@@ -257,6 +226,7 @@ const Checkout = () => {
         <button className='back-to-cart' onClick={() => navigate('/cart')}>Назад в корзину</button>
 
       </div>
+
       <div className="checkout-footer">
         <button onClick={handleSubmit} disabled={!isFormValid}>
           {isFormValid ? 'Завершить заказ' : 'Заполните обязательные поля'}
