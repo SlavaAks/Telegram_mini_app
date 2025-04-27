@@ -4,15 +4,17 @@ import TopBar from '../components/TopBar';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import request from '../utils/api.ts';
+import { useTelegramViewport } from '../hooks/useTelegramViewport';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart } = useCart();
   const WebApp = window.Telegram?.WebApp;
-
+  const viewportHeight = useTelegramViewport();
+  window.Telegram?.WebApp.disableVerticalSwipes();
 
   const getFormvalues = () => {
-    const storedValues = localStorage.getItem('checkoutForm')
+    const storedValues = localStorage.getItem('checkoutForm');
     if (!storedValues) return {
       fullName: '',
       phone: '',
@@ -24,19 +26,17 @@ const Checkout = () => {
       branchNumber: '',
       zip: '',
       discount: ''
-    }
+    };
     return JSON.parse(storedValues);
-  }
+  };
 
-  const [form, setForm] = useState(getFormvalues)
+  const [form, setForm] = useState(getFormvalues);
 
-  // Загрузка данных из localStorage при монтировании компонента
   useEffect(() => {
     const savedForm = localStorage.getItem('checkoutForm');
     if (savedForm) {
       try {
         const parsedForm = JSON.parse(savedForm);
-        // Только если данные корректны, устанавливаем их в состояние
         if (parsedForm && typeof parsedForm === 'object') {
           setForm(parsedForm);
         }
@@ -46,32 +46,22 @@ const Checkout = () => {
     }
   }, []);
 
-  // Сохранение данных в localStorage при изменении состояния
   useEffect(() => {
     if (form) {
       localStorage.setItem('checkoutForm', JSON.stringify(form));
     }
   }, [form]);
 
-
   useEffect(() => {
     if (WebApp?.BackButton) {
       WebApp.BackButton.show();
-
-      WebApp.BackButton.onClick(() => {
-        navigate(-1); // вернуться назад
-      });
-
+      WebApp.BackButton.onClick(() => navigate(-1));
       return () => {
-        WebApp.BackButton.hide(); // скрыть при размонтировании
-        WebApp.BackButton.offClick(); // очистить обработчик
+        WebApp.BackButton.hide();
+        WebApp.BackButton.offClick();
       };
     }
   }, [navigate, WebApp]);
-
-
-
-
 
   const isFormValid =
     form.fullName &&
@@ -79,15 +69,14 @@ const Checkout = () => {
     form.size &&
     form.deliveryMethod &&
     ((form.deliveryMethod === 'Белпочта' && form.address) ||
-    (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
-    (form.deliveryMethod === 'Самовывоз' && form.city));
-
+      (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
+      (form.deliveryMethod === 'Самовывоз' && form.city));
 
   const handleSubmit = useCallback(async () => {
     if (!isFormValid || !WebApp) return;
 
     if (cart.length > 5) {
-      WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не болee 5 товаров");
+      WebApp.showAlert("Превышен лимит покупок! Удалите некоторые товары с корзины, допустимое количество не более 5 товаров");
       return;
     }
 
@@ -106,26 +95,20 @@ const Checkout = () => {
       total,
       timestamp: new Date().toISOString(),
       telegram_link: WebApp.initDataUnsafe?.user?.id
-  ? `https://t.me/${WebApp.initDataUnsafe.user.username || `user?id=${WebApp.initDataUnsafe.user.id}`}`
-  : null,
+        ? `https://t.me/${WebApp.initDataUnsafe.user.username || `user?id=${WebApp.initDataUnsafe.user.id}`}`
+        : null,
     };
 
     try {
       await request('order', 'POST', payload);
-
-      // Показываем алерт
       WebApp.showAlert("🎉 Ваш заказ успешно оформлен!");
-
-      // Очищаем корзину (если хочешь)
       cart.forEach(item => removeFromCart(item.id_item));
-
-      navigate('/')
+      navigate('/');
     } catch (error) {
       console.error('Ошибка оформления заказа:', error);
       WebApp.showAlert("❌ Произошла ошибка при оформлении заказа. Попробуйте позже.");
     }
   }, [form, isFormValid, WebApp, cart, removeFromCart]);
-
 
   const handleChange = e => {
     setForm(prev => ({
@@ -151,7 +134,7 @@ const Checkout = () => {
   );
 
   return (
-    <section className="section-page">
+    <section className="section-page-checkout" style={{ height: viewportHeight }}>
       <div className="sticky-header">
         <TopBar
           onLogoClick={() => navigate('/')}
@@ -184,7 +167,18 @@ const Checkout = () => {
         )}
         {renderInput('ФИО получателя', 'fullName', 'Фамилия Имя Отчество', 'text', true)}
         {renderInput('Телефон', 'phone', '+375 (29) 999-99-99', 'text', true)}
-        {renderInput('Длина стопы (см)*', 'size', '', 'number', true)}
+
+        <div className='select-form'>
+          <label style={{ color: form.size ? '#000' : 'red' }}>Размер ступни (см)</label>
+          <select name="size" value={form.size} onChange={handleChange} required>
+            <option value="">Выберите</option>
+            <option value="26">26 см</option>
+            <option value="26.5">26.5 см</option>
+            <option value="27.5">27.5 см</option>
+            <option value="28">28 см</option>
+            <option value="29">29 см</option>
+          </select>
+        </div>
 
         <div className='select-form'>
           <label style={{ color: form.deliveryMethod ? '#000' : 'red' }}>Способ получения</label>
@@ -205,24 +199,23 @@ const Checkout = () => {
 
         {form.deliveryMethod === 'Европочта' && (
           <>
-            {renderInput('Номер отделения Европочты', 'branchNumber', 'Например: 12', 'text', true)}
+            {renderInput('Номер или адрес отделения Европочты', 'branchNumber', 'Например: 12', 'text', true)}
           </>
         )}
         {form.deliveryMethod === 'Самовывоз' && (
-          <>
-            <div className='select-form'>
-              <label style={{ color: form.city ? '#000' : 'red' }}>Город Минск/Витебск</label>
-              <select name="city" value={form.city} onChange={handleChange} required>
-                <option value="">Выберите</option>
-                <option value="Минск">Минск</option>
-                <option value="Витебск">Витебск</option>
-              </select>
-            </div>
-          </>
+          <div className='select-form'>
+            <label style={{ color: form.city ? '#000' : 'red' }}>Город Минск/Витебск</label>
+            <select name="city" value={form.city} onChange={handleChange} required>
+              <option value="">Выберите</option>
+              <option value="Минск">Минск</option>
+              <option value="Витебск">Витебск</option>
+            </select>
+          </div>
         )}
+
         <div className='select-form'>
           <label>Ваша скидка</label>
-          <select name="discount" value={form.discount} onChange={handleChange} required>
+          <select name="discount" value={form.discount} onChange={handleChange}>
             <option value="">Выберите</option>
             <option value="5">5%</option>
             <option value="7">7%</option>
@@ -233,6 +226,7 @@ const Checkout = () => {
         <button className='back-to-cart' onClick={() => navigate('/cart')}>Назад в корзину</button>
 
       </div>
+
       <div className="checkout-footer">
         <button onClick={handleSubmit} disabled={!isFormValid}>
           {isFormValid ? 'Завершить заказ' : 'Заполните обязательные поля'}

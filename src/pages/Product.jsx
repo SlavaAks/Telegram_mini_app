@@ -5,26 +5,27 @@ import TopBar from '../components/TopBar';
 import { useCart } from '../context/CartContext';
 
 const Product = ({ onAddToCart }) => {
+  const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
   const { state } = useLocation();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
   const WebApp = window.Telegram?.WebApp;
 
-    useEffect(() => {
-      if (WebApp?.BackButton) {
-        WebApp.BackButton.show();
-  
-        WebApp.BackButton.onClick(() => {
-          navigate(-1); // вернуться назад
-        });
-  
-        return () => {
-          WebApp.BackButton.hide(); // скрыть при размонтировании
-          WebApp.BackButton.offClick(); // очистить обработчик
-        };
-      }
-    }, [navigate, WebApp]);
+  useEffect(() => {
+    if (WebApp?.BackButton) {
+      WebApp.BackButton.show();
+
+      WebApp.BackButton.onClick(() => {
+        navigate(-1); // вернуться назад
+      });
+
+      return () => {
+        WebApp.BackButton.hide(); // скрыть при размонтировании
+        WebApp.BackButton.offClick(); // очистить обработчик
+      };
+    }
+  }, [navigate, WebApp]);
 
   if (!state || !state.product) {
     return <p>Товар не найден</p>;
@@ -48,6 +49,17 @@ const Product = ({ onAddToCart }) => {
     : price;
 
 
+  // При выборе размера сбрасываем isAdded
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    setIsAdded(false); // размер поменяли → снова "Добавить в корзину"
+  };
+
+  // При нажатии на кнопку
+  const handleAddToCart = () => {
+    addToCart({ id, selectedSize, finalPrice, brand, name, image });
+    setIsAdded(true); // успешно добавили → меняем кнопку
+  };
 
   return (
     <div className="product-page">
@@ -74,31 +86,31 @@ const Product = ({ onAddToCart }) => {
       </div>
 
       <div className="sizes">
-          <p>Выберите размер:</p>
-          <div className="size-buttons">
-            {availableSizes.map((size) => {
-              const isDiscounted = discountSize.includes(size);
-              return (
-                <div className="size-wrapper" key={size}>
-                  <button
-                    className={`size-btn ${selectedSize === size ? "active" : ""}`}
-                    onClick={() => setSelectedSize(size)}
-                  >
-                    {size}
-                  </button>
-                  {isDiscounted && <span className="discount-badge">Скидка</span>}
-                </div>
-              );
-            })}
-          </div>
+        <p>Выберите размер:</p>
+        <div className="size-buttons">
+          {availableSizes.map((size) => {
+            const isDiscounted = discountSize.includes(size);
+            return (
+              <div className="size-wrapper" key={size}>
+                <button
+                  className={`size-btn ${selectedSize === size ? "active" : ""}`}
+                  onClick={() => handleSizeSelect(size)}
+                >
+                  {size}
+                </button>
+                {isDiscounted && <span className="discount-badge">Скидка</span>}
+              </div>
+            );
+          })}
         </div>
+      </div>
 
       <button
-        className="buy-btn"
+        className={`buy-btn ${isAdded ? "added" : ""}`}
         disabled={!selectedSize}
-      onClick={() => addToCart({id,selectedSize,finalPrice,brand,name,image})}
+        onClick={isAdded ? () => navigate("/cart") : handleAddToCart}
       >
-        Добавить в корзину 😌
+        {isAdded ? "Перейти в корзину 🛒" : "Добавить в корзину 😌"}
       </button>
     </div>
   );

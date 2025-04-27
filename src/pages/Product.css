@@ -105,3 +105,21 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.buy-btn {
+  transition: all 0.3s ease;
+}
+
+.buy-btn.added {
+  background-color: #7232d2;
+  transform: scale(1.05);
+}
+
+.buy-btn.added:hover {
+  background-color: #007bff; /* Обычный hover для "добавить" */
+}
+
+.buy-btn:not(.added):hover {
+  background-color: #007bff; /* Обычный hover для "добавить" */
+  color: white;
+}

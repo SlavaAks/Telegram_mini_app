@@ -26,6 +26,7 @@ const useSSE = (onUpdate) => {
         if (isOutdated) {
           console.log("🔄 Обновляем данные по SSE");
           await onUpdate();
+	  localStorage.setItem('last_updated', new Date().toISOString());
         } else {
           console.log("✅ Данные локально актуальны");
         }
@@ -35,7 +36,6 @@ const useSSE = (onUpdate) => {
     };
 
       es.onmessage = (event) => {
-        console.log("[SSE] Raw event:", event.data);
         if (event.data === "update") {
           console.log("[SSE] Received update");
           onUpdate();
@@ -66,32 +66,3 @@ const useSSE = (onUpdate) => {
 };
 
 export default useSSE;
-// import { useEffect } from "react";
-
-// const useSSE = (onUpdate) => {
-//   useEffect(() => {
-//     const eventSource = new EventSource(`http://localhost:8080/stream`);
-
-//     eventSource.onmessage = (event) => {
-//       console.log(event.data)
-//       if (event.data === "update") {
-//         onUpdate(); // Запускаем обновление данных
-//       }
-//     };
-
-//     // eventSource.addEventListener("stream_event", (event) => {
-//     //   console.log("Named event received:", event.data);
-//     // });
-
-//     eventSource.onerror = (err) => {
-//       console.error("SSE error:", err);
-//       eventSource.close();
-//     };
-
-//     return () => {
-//       eventSource.close();
-//     };
-//   }, [onUpdate]);
-// };
-
-// export default useSSE;
