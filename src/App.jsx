@@ -18,7 +18,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isLoaded) return <p className="p-6">Загрузка данных...</p>;
+  if (!isLoaded) return <p className="p-6"></p>;
 
   return (
 

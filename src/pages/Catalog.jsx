@@ -40,6 +40,7 @@ const Catalog = () => {
         discountSize: item[6] !== null ? item[6].split(',') : [],
         discount: item[7] !== null ? parseInt(item[7].replace('%', '')) : false,
         category: item[8],
+        telegramLink: item[9],
       }));
 
       setProducts(parsed);
@@ -48,7 +49,7 @@ const Catalog = () => {
       console.error('Ошибка при загрузке товаров:', error);
     }
   };
-
+  
   // Инициализируем SSE-подписку
   useSSE(fetchProducts);
 
@@ -217,7 +218,7 @@ const Catalog = () => {
       </div>
       <div className="product-list">
         {loading ? (
-          <p>Загрузка товаров...</p>
+          <p></p>
         ) : filteredProducts.length > 0 ? (
           <AnimatePresence>
             {filteredProducts.map((product, index) => (
