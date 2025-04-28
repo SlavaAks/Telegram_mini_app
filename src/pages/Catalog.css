@@ -1,3 +1,27 @@
+/* .section-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 30px;
+  box-sizing: border-box;
+  min-height: 100vh; 
+  overflow-y: auto; 
+} */
+
+.section-page {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
 /* Контейнер с фильтрами */
 .div-filter {
   display: flex;

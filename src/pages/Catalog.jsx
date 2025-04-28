@@ -7,6 +7,7 @@ import useSSE from '../hooks/useSSE'
 import request from '../utils/api.ts';
 import './Catalog.css';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTelegramViewport } from '../hooks/useTelegramViewport';
 
 const Catalog = () => {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ const Catalog = () => {
   const [discountOnly, setDiscountOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modelFilter, setModelFilter] = useState('all');
+  const viewportHeight = useTelegramViewport();
+  window.Telegram?.WebApp.disableVerticalSwipes();
 
   const fetchProducts = async () => {
     try {
@@ -115,11 +118,13 @@ const Catalog = () => {
   const allCategory = ["shoes", "clothes"]
 
   return (
-    <section className="section-page">
-      <TopBar
-        onLogoClick={() => navigate('/')}
-        onCartClick={() => navigate('/cart')}
-      />
+    <section className="section-page" style={{ height: viewportHeight }}>
+      <div className="sticky-header">
+        <TopBar
+          onLogoClick={() => navigate('/')}
+          onCartClick={() => navigate('/cart')}
+        />
+      </div>
 
       <div className="div-input">
         <input
