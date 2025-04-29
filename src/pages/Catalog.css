@@ -22,6 +22,14 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
+
+.div-input {
+  position: sticky;
+  top: 80px; /* отступ ниже TopBar*/
+  z-index: 19; /* чуть меньше чем у TopBar (20), чтобы не перекрыть его */
+  background-color: white; /* чтобы не просвечивало при скролле */
+  padding: 8px 0; /* немного отступов сверху и снизу */
+}
 /* Контейнер с фильтрами */
 .div-filter {
   display: flex;

@@ -26,9 +26,39 @@
   margin-bottom: 10px;
 }
 
-.product-page-price {
+.product-page-price-tglink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* чтобы цена слева, ссылка справа */
   font-size: 1.2rem;
   margin-bottom: 20px;
+  gap: 10px; /* чтобы между ценой и ссылкой был зазор */
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* расстояние между ценами если есть скидка */
+}
+
+.telegram-link {
+  margin-top: 0; /* убираем верхний отступ */
+}
+
+.telegram-link a {
+  display: inline-block;
+  padding: 6px 10px;
+  background-color: #229ED9;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.telegram-link a:hover {
+  background-color: #1b8ccf;
 }
 
 .discounted {

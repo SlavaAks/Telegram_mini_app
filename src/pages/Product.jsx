@@ -41,6 +41,7 @@ const Product = ({ onAddToCart }) => {
     discountSize = [],
     discount,
     category,
+    telegramLink
   } = state.product;
 
   const hasDiscount = selectedSize && discountSize.includes(selectedSize);
@@ -74,14 +75,24 @@ const Product = ({ onAddToCart }) => {
 
       <h2 className="product-title">{brand} {name}</h2>
 
-      <div className="product-page-price">
-        {hasDiscount ? (
-          <>
-            <span className="discounted">{finalPrice} BYN</span>
-            <span className="original">{price} BYN</span>
-          </>
-        ) : (
-          <span>{price} BYN</span>
+      <div className="product-page-price-tglink">
+        <div className="price">
+          {hasDiscount ? (
+            <>
+              <span className="discounted">{finalPrice} BYN</span>
+              <span className="original">{price} BYN</span>
+            </>
+          ) : (
+            <span>{price} BYN</span>
+          )}
+        </div>
+
+        {telegramLink && (
+          <div className="telegram-link">
+            <a href={telegramLink} target="_blank" rel="noopener noreferrer">
+              📢 Посмотреть пост в канале
+            </a>
+          </div>
         )}
       </div>
 
