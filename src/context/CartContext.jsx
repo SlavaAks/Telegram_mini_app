@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = ({ id, selectedSize, finalPrice, brand, name, image }) => {
+  const addToCart = ({ id, selectedSize, finalPrice, brand, name, image, color }) => {
     const nextId = cart.length > 0 ? cart[cart.length - 1].id_item + 1 : 1;
     const product = {
       id_item: nextId,
@@ -24,6 +24,7 @@ export const CartProvider = ({ children }) => {
       brand,
       model: name,
       image,
+      color,
     };
     setCart((prev) => [...prev, product]);
   };

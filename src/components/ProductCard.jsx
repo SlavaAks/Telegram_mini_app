@@ -7,7 +7,7 @@ const ProductCard = ({ image, name, brand, price, discount, onClick }) => {
   return (
     <div className="product-card" onClick={onClick}>
       <div className="product-image-wrapper">
-        <img src={image} alt={name} className="product-image" />
+        <img src={image[0]} alt={name} className="product-image" />
         {discount && <div className="product-discount">-{discount}%</div>}
       </div>
 

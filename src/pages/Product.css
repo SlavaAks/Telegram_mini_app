@@ -12,15 +12,6 @@
   background: white;
 }
 
-.product-page-image-full {
-  width: 100%;
-  max-height: 350px;
-  object-fit: contain;  /* Используем contain вместо cover */
-  margin: 0 auto 20px auto;
-  display: block;
-  border-radius: 10px;
-}
-
 .product-title {
   font-size: 1.4rem;
   margin-bottom: 10px;
@@ -38,33 +29,50 @@
 .price {
   display: flex;
   align-items: center;
-  gap: 10px; /* расстояние между ценами если есть скидка */
+  gap: 1px; /* расстояние между ценами если есть скидка */
 }
 
 .telegram-link {
-  margin-top: 0; /* убираем верхний отступ */
+  margin-top: 10px;
+  text-align: center;
 }
 
 .telegram-link a {
   display: inline-block;
-  padding: 6px 10px;
+  padding: 6px 12px;
   background-color: #229ED9;
   color: white;
   border-radius: 8px;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .telegram-link a:hover {
   background-color: #1b8ccf;
 }
 
+.offer-text {
+  font-size: 16px;
+  color: #007bff;
+  font-weight: 600;
+  margin-top: 10px;
+  background-color: #f0f8ff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.offer-text:hover {
+  transform: scale(1.05);
+}
+
 .discounted {
   color: red;
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 2px;
 }
 
 .original {
@@ -152,4 +160,126 @@
 .buy-btn:not(.added):hover {
   background-color: #007bff; /* Обычный hover для "добавить" */
   color: white;
+}
+
+
+
+.color-options {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.color-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.color-circle.selected {
+  border: 2px solid #7232d2;
+  transform: scale(1.1);
+}
+
+.image-slider {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+/* .product-page-image-full {
+  width: 100%;
+  max-height: 350px;
+  object-fit: contain;  
+  margin: 0 auto 20px auto;
+  display: block;
+  border-radius: 10px;
+} */
+
+.product-page-image-full {
+  width: 100%;
+  height: auto;
+  user-select: none;
+  touch-action: pan-y;
+  border-radius: 12px;
+}
+
+.image-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.image-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.image-dot.active {
+  background: #333;
+}
+
+.color-selector {
+    display: flex;
+    justify-content: flex-start;
+    width: fit-content; /* чтобы не тянулся на всю ширину */
+  }
+
+
+.color-buttons {
+  display: inline-flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: nowrap;
+}
+
+
+.color-btn {
+  min-width: 24px;
+  
+  height: 24px;
+  padding: 2px 2px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  white-space: nowrap;      
+  overflow: hidden;           
+  text-overflow: ellipsis;    
+  max-width: 150px;             
+}
+
+.color-btn.active {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  transform: scale(1.05);
+  border-color: #7232d2;
+}
+
+.color-label-and-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* выравнивание по левому краю */
+  gap: 6px; /* расстояние между надписью и кнопками */
+}
+
+.color-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.drag-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }

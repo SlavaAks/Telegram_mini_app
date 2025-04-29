@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import request from '../utils/api.ts';
 import { useTelegramViewport } from '../hooks/useTelegramViewport';
+import { number } from 'framer-motion';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -63,8 +64,14 @@ const Checkout = () => {
     }
   }, [navigate, WebApp]);
 
+
+  const isValidPhone = (phone) => {
+    const phoneRegex = /^(?:\+375|375|8\d{1})\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
+    return phoneRegex.test(phone);
+  };
   const isFormValid =
     form.fullName &&
+    isValidPhone(form.phone) &&
     form.phone &&
     form.size &&
     form.deliveryMethod &&
@@ -152,6 +159,7 @@ const Checkout = () => {
                   <strong>{item.brand} {item.model}</strong>
                   <div>Артикул: {item.articul}</div>
                   <div>Размер: {item.size}</div>
+                  <div>Цвет: {item.color}</div>
                   <div>Цена: {item.finalPrice} BYN</div>
                 </div>
                 {item.image && (
@@ -166,17 +174,31 @@ const Checkout = () => {
           </div>
         )}
         {renderInput('ФИО получателя', 'fullName', 'Фамилия Имя Отчество', 'text', true)}
-        {renderInput('Телефон', 'phone', '+375 (29) 999-99-99', 'text', true)}
+        <div>
+          <label style={{ color: true && !isValidPhone(form.phone) ? 'red' : '#000' }}>
+            Телефон
+          </label>
+          <input
+            name={'phone'}
+            type={'number'}
+            value={form['phone']}
+            onChange={handleChange}
+            className={true && !form['phone'] ? 'input-error' : ''}
+            placeholder={'+37529... или 37529... или 89123456789...'}
+          />
+        </div>
 
         <div className='select-form'>
           <label style={{ color: form.size ? '#000' : 'red' }}>Размер ступни (см)</label>
           <select name="size" value={form.size} onChange={handleChange} required>
             <option value="">Выберите</option>
+            <option value="25.5">25.5 см</option>
             <option value="26">26 см</option>
             <option value="26.5">26.5 см</option>
             <option value="27.5">27.5 см</option>
             <option value="28">28 см</option>
             <option value="29">29 см</option>
+            <option value="29.5">29.5 см</option>
           </select>
         </div>
 
@@ -217,6 +239,7 @@ const Checkout = () => {
           <label>Ваша скидка</label>
           <select name="discount" value={form.discount} onChange={handleChange}>
             <option value="">Выберите</option>
+            <option value="нет">нет</option>
             <option value="5">5%</option>
             <option value="7">7%</option>
             <option value="9">9%</option>

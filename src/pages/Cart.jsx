@@ -9,7 +9,6 @@ const Cart = () => {
   const { cart, removeFromCart } = useCart();
   const navigate = useNavigate();
   const WebApp = window.Telegram?.WebApp;
-
   useEffect(() => {
     if (WebApp?.BackButton) {
       WebApp.BackButton.show();

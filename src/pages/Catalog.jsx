@@ -34,13 +34,14 @@ const Catalog = () => {
         id: item[0],
         brand: item[1] || '',
         name: item[2] ? String(item[2]) : '',
-        image: item[3],
-        availableSizes: item[4].split(','),
-        price: parseInt(item[5].replace(/\D/g, ''), 10),
-        discountSize: item[6] !== null ? item[6].split(',') : [],
-        discount: item[7] !== null ? parseInt(item[7].replace('%', '')) : false,
-        category: item[8],
-        telegramLink: item[9],
+        image: item[3]!== null ? item[3].split(',') : [],
+        colors: item[4]!== null ? item[4].split(',') : [],
+        availableSizes: item[5].split(','),
+        price: parseInt(item[6].replace(/\D/g, ''), 10),
+        discountSize: item[7] !== null ? item[7].split(',') : [],
+        discount: item[8] !== null ? parseInt(item[8].replace('%', '')) : false,
+        category: item[9],
+        telegramLink: item[10],
       }));
 
       setProducts(parsed);
