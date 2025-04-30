@@ -66,8 +66,10 @@ const Checkout = () => {
 
 
   const isValidPhone = (phone) => {
-    const phoneRegex = /^(?:\+375|375|8\d{1})\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
-    return phoneRegex.test(phone);
+    const belarusPhoneRegex = /^(?:\+375|375|8\d{1})\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
+    const russiaPhoneRegex = /^(?:\+7|7|8)\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
+    
+    return belarusPhoneRegex.test(phone) || russiaPhoneRegex.test(phone);
   };
   const isFormValid =
     form.fullName &&
