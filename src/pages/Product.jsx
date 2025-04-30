@@ -122,8 +122,8 @@ const Product = ({ product: propProduct }) => {
 
 
   //Параметры для формирования ссылки для кнопки поделиться
-  const botUsername = "origa_shop_arutun_bot";
-  const startAppPath = "lawka";
+  const botUsername = "Lawka_by_bot";
+  const startAppPath = "shop";
   const shareUrl = `https://t.me/${botUsername}/${startAppPath}?startapp=${id}`;
   const shareText = `Посмотри, что нашёл: ${brand} ${name}`;
   const telegramShareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
