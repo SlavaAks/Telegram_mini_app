@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import "./Product.css";
 import TopBar from "../components/TopBar";
 import { useCart } from "../context/CartContext";
 
 const Product = ({ product: propProduct }) => {
+  //Настройки для анимации
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
+
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
   const { pathname, state } = useLocation();
@@ -64,7 +68,9 @@ const Product = ({ product: propProduct }) => {
     discountSize = [],
     discount,
     category,
-    telegramLink
+    telegramLink,
+    madein,
+    material
   } = product;
 
   const selectedColor = colors[currentImageIndex] || null;
@@ -91,7 +97,7 @@ const Product = ({ product: propProduct }) => {
     setIsAdded(true);
   };
 
-  const swipeConfidenceThreshold = 10000;
+  const swipeConfidenceThreshold = 3000;
   const swipePower = (offset, velocity) => Math.abs(offset) * velocity;
 
   const changeImage = (newIndex) => {
@@ -113,6 +119,15 @@ const Product = ({ product: propProduct }) => {
     return { left: 0, right: 0 };
   };
 
+
+
+  //Параметры для формирования ссылки для кнопки поделиться
+  const botUsername = "origa_shop_arutun_bot";
+  const startAppPath = "lawka";
+  const shareUrl = `https://t.me/${botUsername}/${startAppPath}?startapp=${id}`;
+  const shareText = `Посмотри, что нашёл: ${brand} ${name}`;
+  const telegramShareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+
   return (
     <div className="product-page">
       <div className="top-bar-wrapper">
@@ -128,10 +143,16 @@ const Product = ({ product: propProduct }) => {
               alt={`${name}-${currentImageIndex}`}
               className="product-page-image-full"
               custom={direction}
+              style={{
+                x,
+                opacity,
+                transition: "0.125s transform",
+                boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5)",
+              }}
               initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               drag="x"
               dragConstraints={dragContainerRef}
               onDragEnd={(e, { offset, velocity }) => {
@@ -175,33 +196,59 @@ const Product = ({ product: propProduct }) => {
           </div>
         </div>
       )}
+      <div className="dicription-field">
+        <p className="product-title">{brand} {name}</p>
 
-      <h2 className="product-title">{brand} {name}</h2>
-
-      {selectedColor && (
-        <p className="product-color">Цвет: <b>{selectedColor}</b></p>
-      )}
-
-      <div className="product-page-price-tglink">
-        <div className="price">
-          {hasDiscount ? (
-            <>
-              <span className="discounted">{finalPrice} BYN</span>
-              <span className="original">{price} BYN</span>
-            </>
-          ) : (
-            <span>{price} BYN</span>
+        <div className="price-color">
+          {selectedColor && (
+            <p className="product-color">Цвет: <b>{selectedColor}</b></p>
           )}
+          <div className="price">
+            {hasDiscount ? (
+              <>
+                <span className="discounted">{finalPrice} BYN</span>
+                <span className="original">{price} BYN</span>
+              </>
+            ) : (
+              <span>{price} BYN</span>
+            )}
+          </div>
         </div>
 
-        {telegramLink && (
-          <div className="telegram-link">
-            <p className="offer-text">+ За подписку на канал 2 пары носков в подарок</p>
-            <a href={telegramLink} target="_blank" rel="noopener noreferrer">
-              📢 Посмотреть пост
-            </a>
+        <div className="product-page-price-tglink">
+
+          {telegramLink && (
+            <div className="telegram-link">
+              <div className="link-row">
+                <a
+                  href={telegramShareLink}
+                  className="share-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Поделиться ➦
+                </a>
+                <a
+                  href={telegramLink}
+                  className="channel-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Посмотреть пост в канале
+                </a>
+              </div>
+              <p className="offer-text">+ За подписку на канал 2 пары носков в подарок</p>
+            </div>
+          )}
+        </div>
+        <div className='product-description'>
+          <p className="description-madein">Производитель: {madein}</p>
+          <p className='material'>Материал: {material}</p>
+          <div className="delivary-date">
+            Срок доставки: <span className="delivery-badge">2–5 дней</span>
           </div>
-        )}
+
+        </div>
       </div>
 
       <div className="sizes">

@@ -12,24 +12,112 @@
   background: white;
 }
 
-.product-title {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
+
+.color-selector {
+  display: flex;
+  justify-content: flex-start;
+  width: fit-content;
+  /* чтобы не тянулся на всю ширину */
 }
 
-.product-page-price-tglink {
+.color-label-and-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* выравнивание по левому краю */
+  gap: 2px;
+  /* расстояние между надписью и кнопками */
+}
+
+
+.color-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0;
+  font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+ 
+.color-buttons {
+  display:inline-flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;         /* ← обязательно для переноса */
+  flex-direction: row;     /* ← по умолчанию, но можно явно */
+}
+
+
+
+.color-btn {
+  min-width: 80px;
+  width: auto;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  height: 24px;
+  padding: 1px 1px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.color-btn.active {
+  background-color: #8c48f3;
+  color: white;
+  transform: scale(1.05);
+  border-color: #2b0269;
+}
+
+
+.product-title {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+.price-color {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* чтобы цена слева, ссылка справа */
-  font-size: 1.2rem;
+  justify-content: space-between;
+  /* чтобы цена слева, ссылка справа */
+  font-size: 1rem;
   margin-bottom: 20px;
-  gap: 10px; /* чтобы между ценой и ссылкой был зазор */
+  gap: 10px;
+  /* чтобы между ценой и ссылкой был зазор */
 }
+
+
 
 .price {
   display: flex;
   align-items: center;
-  gap: 1px; /* расстояние между ценами если есть скидка */
+  gap: 1px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.product-page-price-tglink .telegram-link {
+  margin-top: 10px;
+  text-align: center;
+}
+.share-link{
+  padding: 6px 12px;
+  background-color: #ffffff;
+  color: rgb(26, 26, 248);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.share-link:hover{
+  background-color: #dcdcdc;
 }
 
 .telegram-link {
@@ -37,17 +125,39 @@
   text-align: center;
 }
 
-.telegram-link a {
-  display: inline-block;
-  padding: 6px 12px;
-  background-color: #229ED9;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+.link-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
+
+.share-link,
+.channel-link {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, text-decoration 0.3s;
+  border: 1px solid #ccc;
+}
+
+.share-link:hover,
+.channel-link:hover {
+  background-color: #dcdcdc;
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+.channel-link {
+  color: #007bff;
+}
+
+
+.telegram-link a 
 
 .telegram-link a:hover {
   background-color: #1b8ccf;
@@ -69,6 +179,43 @@
   transform: scale(1.05);
 }
 
+.product-description{
+  font-size: 13px;
+}
+
+.description-madein{
+  font-weight: 700;
+}
+
+
+.delivery-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  margin-left: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  background: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.delivery-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 8px;
+  background: linear-gradient(270deg, #b3267a, #b106f0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+
 .discounted {
   color: red;
   font-weight: bold;
@@ -82,6 +229,8 @@
 
 .sizes {
   margin: 20px 0;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .size-buttons {
@@ -96,6 +245,10 @@
 }
 
 .size-btn {
+  justify-items: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
   padding: 10px 16px;
   border: 1px solid #bbafaf;
   border-radius: 8px;
@@ -103,7 +256,6 @@
   background: white;
   color: black;
   transition: 0.2s;
-  font-size: 13px;
   width: 50px;
   height: 35px;
 }
@@ -118,7 +270,9 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: linear-gradient(270deg, #b3267a, #b106f0); /* Цвета градиента */;
+  background: linear-gradient(270deg, #b3267a, #b106f0);
+  /* Цвета градиента */
+  ;
   color: white;
   font-size: 10px;
   font-weight: bold;
@@ -154,39 +308,24 @@
 }
 
 .buy-btn.added:hover {
-  background-color: #007bff; /* Обычный hover для "добавить" */
+  background-color: #007bff;
+  /* Обычный hover для "добавить" */
 }
 
 .buy-btn:not(.added):hover {
-  background-color: #007bff; /* Обычный hover для "добавить" */
+  background-color: #007bff;
+  /* Обычный hover для "добавить" */
   color: white;
 }
 
 
-
-.color-options {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.color-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-.color-circle.selected {
-  border: 2px solid #7232d2;
-  transform: scale(1.1);
-}
 
 .image-slider {
   position: relative;
   overflow: hidden;
   width: 100%;
 }
+
 /* .product-page-image-full {
   width: 100%;
   max-height: 350px;
@@ -198,7 +337,9 @@
 
 .product-page-image-full {
   width: 100%;
-  height: auto;
+  /* height: auto;
+  min-height: 320px; */
+  aspect-ratio: 1 / 1;
   user-select: none;
   touch-action: pan-y;
   border-radius: 12px;
@@ -225,58 +366,6 @@
   background: #333;
 }
 
-.color-selector {
-    display: flex;
-    justify-content: flex-start;
-    width: fit-content; /* чтобы не тянулся на всю ширину */
-  }
-
-
-.color-buttons {
-  display: inline-flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: nowrap;
-}
-
-
-.color-btn {
-  min-width: 24px;
-  
-  height: 24px;
-  padding: 2px 2px;
-  font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #000;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  white-space: nowrap;      
-  overflow: hidden;           
-  text-overflow: ellipsis;    
-  max-width: 150px;             
-}
-
-.color-btn.active {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  transform: scale(1.05);
-  border-color: #7232d2;
-}
-
-.color-label-and-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* выравнивание по левому краю */
-  gap: 6px; /* расстояние между надписью и кнопками */
-}
-
-.color-label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 0;
-}
 
 .drag-container {
   width: 100%;

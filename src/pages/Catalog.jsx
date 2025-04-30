@@ -36,12 +36,14 @@ const Catalog = () => {
         name: item[2] ? String(item[2]) : '',
         image: item[3]!== null ? item[3].split(',') : [],
         colors: item[4]!== null ? item[4].split(',') : [],
-        availableSizes: item[5].split(','),
-        price: parseInt(item[6].replace(/\D/g, ''), 10),
+        availableSizes: item[5]!== null ? item[5].split(',') : [],
+        price: item[6]!== null ? parseInt(item[6].replace(/\D/g, ''), 10) : '',
         discountSize: item[7] !== null ? item[7].split(',') : [],
         discount: item[8] !== null ? parseInt(item[8].replace('%', '')) : false,
-        category: item[9],
-        telegramLink: item[10],
+        category: item[9] || '',
+        telegramLink: item[10] || '',
+        madein: item[11] ? String(item[11]) : '',
+        material: item[12] ? String(item[12]) : '',
       }));
 
       setProducts(parsed);

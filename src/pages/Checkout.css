@@ -9,7 +9,7 @@
   overflow: hidden;
 }
 
-.sticky-header {
+.sticky-header-checkout {
   position: sticky;
   top: 0;
   z-index: 20;

@@ -13,23 +13,36 @@
 .section-page {
   display: flex;
   flex-direction: column;
-  padding: 30px;
+  padding: 0px 30px;
+  overflow-y: auto; /* обязательно, если родитель скроллирует */
+  height: 100%;     /* чтобы работал sticky */
+  box-sizing: border-box;
 }
 .sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  /* position: sticky; */
+  /* top: 0; */
+  /* z-index: 20; */
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .div-input {
+  position: sticky; 
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  }
+
+/* .div-input input {
   position: sticky;
-  top: 80px; /* отступ ниже TopBar*/
-  z-index: 19; /* чуть меньше чем у TopBar (20), чтобы не перекрыть его */
-  background-color: white; /* чтобы не просвечивало при скролле */
-  padding: 8px 0; /* немного отступов сверху и снизу */
-}
+  top: 0;
+  z-index: 19;
+  background-color: white;
+  padding: 0;
+} */
+/* .div-input {
+  padding: 8px 0;
+} */
 /* Контейнер с фильтрами */
 .div-filter {
   display: flex;

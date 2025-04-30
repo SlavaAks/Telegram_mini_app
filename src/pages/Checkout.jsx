@@ -142,7 +142,7 @@ const Checkout = () => {
 
   return (
     <section className="section-page-checkout" style={{ height: viewportHeight }}>
-      <div className="sticky-header">
+      <div className="sticky-header-checkout">
         <TopBar
           onLogoClick={() => navigate('/')}
           onCartClick={() => navigate('/cart')}
