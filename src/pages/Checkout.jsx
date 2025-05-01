@@ -66,10 +66,12 @@ const Checkout = () => {
 
 
   const isValidPhone = (phone) => {
-    const belarusPhoneRegex = /^(?:\+375|375|8\d{1})\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
-    const russiaPhoneRegex = /^(?:\+7|7|8)\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$/;
-    
-    return belarusPhoneRegex.test(phone) || russiaPhoneRegex.test(phone);
+    const cleaned = phone.replace(/[\s()-]/g, '');
+  
+    const belarusPhoneRegex = /^(\+375|375|80)(25|29|33|44|17)\d{7}$/;
+    const russiaPhoneRegex = /^(\+7|7|8)(\d{10})$/;
+  
+    return belarusPhoneRegex.test(cleaned) || russiaPhoneRegex.test(cleaned);
   };
   const isFormValid =
     form.fullName &&
@@ -93,7 +95,8 @@ const Checkout = () => {
       title: `${item.brand} ${item.model}`,
       articul: item.articul,
       size: item.size,
-      price: item.finalPrice
+      price: item.finalPrice,
+      color: item.color
     }));
 
     const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
