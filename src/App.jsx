@@ -5,6 +5,7 @@ import Cart from "./pages/Cart";
 import Product from "./pages/Product";
 import Checkout from "./pages/Checkout";
 import { initTelegram } from "./telegram";
+import { useAutoVersionReload } from './hooks/useAutoVersionReload';
 
 // Вложенный компонент с доступом к useNavigate
 const AppRoutes = () => {
@@ -30,6 +31,7 @@ const AppRoutes = () => {
 };
 
 const App = () => {
+  useAutoVersionReload();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
