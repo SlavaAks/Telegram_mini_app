@@ -13,67 +13,6 @@
 }
 
 
-.color-selector {
-  display: flex;
-  justify-content: flex-start;
-  width: fit-content;
-  /* чтобы не тянулся на всю ширину */
-}
-
-.color-label-and-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  /* выравнивание по левому краю */
-  gap: 2px;
-  /* расстояние между надписью и кнопками */
-}
-
-
-.color-label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 0;
-  font-family:Verdana, Geneva, Tahoma, sans-serif
-}
- 
-.color-buttons {
-  display:inline-flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;         /* ← обязательно для переноса */
-  flex-direction: row;     /* ← по умолчанию, но можно явно */
-}
-
-
-
-.color-btn {
-  min-width: 80px;
-  width: auto;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
-  height: 24px;
-  padding: 1px 1px;
-  font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #000;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
-}
-
-.color-btn.active {
-  background-color: #8c48f3;
-  color: white;
-  transform: scale(1.05);
-  border-color: #2b0269;
-}
-
-
 .product-title {
   font-size: 1.1rem;
   margin-bottom: 5px;
@@ -233,6 +172,12 @@
   font-weight: bold;
 }
 
+.titel-table-btn{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .size-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -371,4 +316,21 @@
   width: 100%;
   overflow: hidden;
   position: relative;
+}
+
+
+
+.toggle-size-chart-btn {
+  all: unset; /* Убирает ВСЕ стандартные стили кнопки */
+  color: #007aff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+
+.toggle-size-chart-btn:hover {
+  all:unset;
+  color: #005bb5; /* темнее при наведении */
+  text-decoration: underline;
 }

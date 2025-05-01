@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import "./Product.css";
 import TopBar from "../components/TopBar";
 import { useCart } from "../context/CartContext";
+import SizeChartModal from "../components/SizeChartModal";
 
 const Product = ({ product: propProduct }) => {
   //Настройки для анимации
@@ -22,6 +23,8 @@ const Product = ({ product: propProduct }) => {
   const productId = pathname.split("/").pop();
   const WebApp = window.Telegram?.WebApp;
   const [product, setProduct] = useState(propProduct || null);
+  const [showSizeChart, setShowSizeChart] = useState(false);
+
   // Если propProduct не передан, ищем товар в локальной памяти по id или articul
   useEffect(() => {
     if (!state) {
@@ -111,13 +114,6 @@ const Product = ({ product: propProduct }) => {
     setDirection(index > currentImageIndex ? 1 : -1);
     setCurrentImageIndex(index);
   };
-  const getDragConstraints = () => {
-    if (imageSliderRef.current) {
-      const sliderWidth = imageSliderRef.current.offsetWidth;
-      return { left: -sliderWidth, right: sliderWidth };
-    }
-    return { left: 0, right: 0 };
-  };
 
 
 
@@ -129,6 +125,7 @@ const Product = ({ product: propProduct }) => {
   const telegramShareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
 
   return (
+
     <div className="product-page">
       <div className="top-bar-wrapper">
         <TopBar onLogoClick={() => navigate("/")} onCartClick={() => navigate("/cart")} />
@@ -177,25 +174,6 @@ const Product = ({ product: propProduct }) => {
           ))}
         </div>
       </div>
-
-      {colors.length > 0 && (
-        <div className="color-selector">
-          <div className="color-label-and-buttons">
-            <div className="color-label">Выберите цвет:</div>
-            <div className="color-buttons">
-              {colors.map((color, index) => (
-                <button
-                  key={color}
-                  className={`color-btn ${index === currentImageIndex ? "active" : ""}`}
-                  onClick={() => handleColorSelect(index)}
-                >
-                  {color}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
       <div className="dicription-field">
         <p className="product-title">{brand} {name}</p>
 
@@ -252,7 +230,14 @@ const Product = ({ product: propProduct }) => {
       </div>
 
       <div className="sizes">
+        <div className="titel-table-btn">
         <p>Выберите размер:</p>
+
+        <button className="toggle-size-chart-btn" onClick={() => setShowSizeChart(true)}>
+          Таблица размеров
+        </button>
+        </div>
+        { showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} /> }
         <div className="size-buttons">
           {availableSizes.map((size) => {
             const isDiscounted = discountSize.includes(size);
