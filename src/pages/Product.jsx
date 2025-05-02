@@ -1,16 +1,46 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { cloudStorage } from "@telegram-apps/sdk";
 import "./Product.css";
 import TopBar from "../components/TopBar";
 import { useCart } from "../context/CartContext";
 import SizeChartModal from "../components/SizeChartModal";
+import placeholder from "../assets/placeholder.png";
+
+const CACHE_KEY = "cachedImages";
+
+const getCachedImages = () => {
+  const cached = cloudStorage.getItem(CACHE_KEY);
+  return cached ? JSON.parse(cached) : {};
+};
+
+const saveCachedImages = (cache) => {
+  cloudStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+};
+
+const preloadAndCacheImage = async (src) => {
+  if (!cloudStorage.isSupported()) return src;
+  const cache = getCachedImages();
+  if (cache[src]) return cache[src];
+  try {
+    await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = src;
+    });
+    cache[src] = src;
+    saveCachedImages(cache);
+    return src;
+  } catch {
+    return null;
+  }
+};
 
 const Product = ({ product: propProduct }) => {
-  //Настройки для анимации
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
-
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
   const { pathname, state } = useLocation();
@@ -18,30 +48,26 @@ const Product = ({ product: propProduct }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const imageSliderRef = useRef(null); // реф для контейнера изображения
   const dragContainerRef = useRef(null);
   const productId = pathname.split("/").pop();
   const WebApp = window.Telegram?.WebApp;
   const [product, setProduct] = useState(propProduct || null);
   const [showSizeChart, setShowSizeChart] = useState(false);
+  const [imgSrc, setImgSrc] = useState(placeholder);
 
-  // Если propProduct не передан, ищем товар в локальной памяти по id или articul
   useEffect(() => {
     if (!state) {
-      const products = JSON.parse(localStorage.getItem("products")) || []; // получаем все товары из локальной памяти
-
+      const products = JSON.parse(localStorage.getItem("products")) || [];
       const foundProduct = products.find(
         (p) => p.id === productId || p.articul === productId
       );
-
       if (foundProduct) {
         setProduct(foundProduct);
       } else {
-        navigate("/"); // если товар не найден, возвращаем на главную
+        navigate("/");
       }
-    }
-    else {
-      setProduct(state.product)
+    } else {
+      setProduct(state.product);
     }
   }, [productId, propProduct, navigate]);
 
@@ -56,31 +82,35 @@ const Product = ({ product: propProduct }) => {
     }
   }, [navigate, WebApp]);
 
+  useEffect(() => {
+    if (product?.image?.[currentImageIndex]) {
+      preloadAndCacheImage(product.image[currentImageIndex]).then((cached) => {
+        // window?.Telegram?.WebApp?.showAlert(cached);
+        setImgSrc(cached || placeholder);
+      });
+    }
+  }, [product, currentImageIndex]);
+
   if (!product) {
-    return <p>Товар не найден</p>;
+
+    return (
+      <div className="product-page">
+        <div className="top-bar-wrapper">
+          <TopBar onLogoClick={() => navigate("/")} onCartClick={() => navigate("/cart")} />
+        </div><p>Товар не найден</p>
+      </div>
+    )
   }
 
+
   const {
-    id,
-    brand,
-    name,
-    image,
-    colors = [],
-    availableSizes,
-    price,
-    discountSize = [],
-    discount,
-    category,
-    telegramLink,
-    madein,
-    material
+    id, brand, name, image, colors = [], availableSizes, price,
+    discountSize = [], discount, category, telegramLink, madein, material
   } = product;
 
   const selectedColor = colors[currentImageIndex] || null;
-
   const hasDiscount = selectedSize && discountSize.includes(selectedSize);
-  const finalPrice =
-    hasDiscount && discount ? Math.round(price - (price * discount) / 100) : price;
+  const finalPrice = hasDiscount && discount ? Math.round(price - (price * discount) / 100) : price;
 
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
@@ -88,15 +118,7 @@ const Product = ({ product: propProduct }) => {
   };
 
   const handleAddToCart = () => {
-    addToCart({
-      id,
-      selectedSize,
-      finalPrice,
-      brand,
-      name,
-      image: image[currentImageIndex],
-      color: selectedColor,
-    });
+    addToCart({ id, selectedSize, finalPrice, brand, name, image: image[currentImageIndex], color: selectedColor });
     setIsAdded(true);
   };
 
@@ -115,37 +137,26 @@ const Product = ({ product: propProduct }) => {
     setCurrentImageIndex(index);
   };
 
-
-
-  //Параметры для формирования ссылки для кнопки поделиться
   const botUsername = "Lawka_by_bot";
-  const startAppPath = "shop";
-  const shareUrl = `https://t.me/${botUsername}/${startAppPath}?startapp=${id}`;
+  const shareUrl = `https://t.me/${botUsername}/shop?startapp=${id}`;
   const shareText = `Посмотри, что нашёл: ${brand} ${name}`;
   const telegramShareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
 
   return (
-
     <div className="product-page">
       <div className="top-bar-wrapper">
         <TopBar onLogoClick={() => navigate("/")} onCartClick={() => navigate("/cart")} />
       </div>
-
-      <div className="image-slider" ref={imageSliderRef}>
+      <div className="image-slider">
         <AnimatePresence initial={false} custom={direction}>
           <div ref={dragContainerRef} className="drag-container">
             <motion.img
               key={currentImageIndex}
-              src={image[currentImageIndex]}
+              src={imgSrc}
               alt={`${name}-${currentImageIndex}`}
               className="product-page-image-full"
               custom={direction}
-              style={{
-                x,
-                opacity,
-                transition: "0.125s transform",
-                boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5)",
-              }}
+              style={{ x, opacity, transition: "0.125s transform", boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5)" }}
               initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
@@ -154,12 +165,10 @@ const Product = ({ product: propProduct }) => {
               dragConstraints={dragContainerRef}
               onDragEnd={(e, { offset, velocity }) => {
                 const swipe = swipePower(offset.x, velocity.x);
-                if (swipe < -swipeConfidenceThreshold) {
-                  changeImage(currentImageIndex + 1);
-                } else if (swipe > swipeConfidenceThreshold) {
-                  changeImage(currentImageIndex - 1);
-                }
+                if (swipe < -swipeConfidenceThreshold) changeImage(currentImageIndex + 1);
+                else if (swipe > swipeConfidenceThreshold) changeImage(currentImageIndex - 1);
               }}
+              onError={() => setImgSrc(placeholder)}
             />
           </div>
         </AnimatePresence>
@@ -221,7 +230,7 @@ const Product = ({ product: propProduct }) => {
         </div>
         <div className='product-description'>
           <p className="description-madein">Производитель: {madein}</p>
-          <p className='material'>Материал: {material}</p>
+          <p className='material'>Описание: {material}</p>
           <div className="delivary-date">
             Срок доставки: <span className="delivery-badge">2–5 дней</span>
           </div>
@@ -231,13 +240,13 @@ const Product = ({ product: propProduct }) => {
 
       <div className="sizes">
         <div className="titel-table-btn">
-        <p>Выберите размер:</p>
-
-        <button className="toggle-size-chart-btn" onClick={() => setShowSizeChart(true)}>
-          Таблица размеров
-        </button>
+          <p>Выберите размер:</p>
+          {category==='shoes'&&
+          <button className="toggle-size-chart-btn" onClick={() => setShowSizeChart(true)}>
+            Таблица размеров
+          </button>}
         </div>
-        { showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} /> }
+        {showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} />}
         <div className="size-buttons">
           {availableSizes.map((size) => {
             const isDiscounted = discountSize.includes(size);

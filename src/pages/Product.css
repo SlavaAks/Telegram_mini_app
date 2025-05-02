@@ -190,19 +190,20 @@
 }
 
 .size-btn {
-  justify-items: center;
-  align-items: center;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 0px;
   border: 1px solid #bbafaf;
   border-radius: 8px;
   cursor: pointer;
   background: white;
   color: black;
   transition: 0.2s;
-  width: 50px;
+  width: 52px;
   height: 35px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
 }
 
 .size-btn.active {
@@ -334,3 +335,4 @@
   color: #005bb5; /* темнее при наведении */
   text-decoration: underline;
 }
+
