@@ -64,6 +64,24 @@ const Checkout = () => {
   }, [navigate, WebApp]);
 
 
+  useEffect(() => {
+    const handleFocus = (e) => {
+      const target = e.target;
+      if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300); // задержка, чтобы клавиатура успела открыться
+      }
+    };
+  
+    window.addEventListener('focusin', handleFocus);
+    return () => {
+      window.removeEventListener('focusin', handleFocus);
+    };
+  }, []);
+  
+
+
   const isValidPhone = (phone) => {
     const cleaned = phone.replace(/[\s()-]/g, '');
   
