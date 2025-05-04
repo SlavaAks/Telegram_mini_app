@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import request from '../utils/api.ts';
 import { useTelegramViewport } from '../hooks/useTelegramViewport';
-import { number } from 'framer-motion';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -185,7 +184,7 @@ const Checkout = () => {
           </label>
           <input
             name={'phone'}
-            type={'number'}
+            type={'text'}
             value={form['phone']}
             onChange={handleChange}
             className={true && !form['phone'] ? 'input-error' : ''}
