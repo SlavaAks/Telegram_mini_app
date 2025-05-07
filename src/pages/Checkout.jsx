@@ -13,6 +13,9 @@ const Checkout = () => {
   const viewportHeight = useTelegramViewport();
   window.Telegram?.WebApp.disableVerticalSwipes();
 
+  const hasShoesInCart = cart.some(item => /^[0-9.]+$/.test(item.size));
+  console.log(hasShoesInCart)
+
   const getFormvalues = () => {
     const storedValues = localStorage.getItem('checkoutForm');
     if (!storedValues) return {
@@ -73,28 +76,28 @@ const Checkout = () => {
         }, 300); // задержка, чтобы клавиатура успела открыться
       }
     };
-  
+
     window.addEventListener('focusin', handleFocus);
     return () => {
       window.removeEventListener('focusin', handleFocus);
     };
   }, []);
-  
+
 
 
   const isValidPhone = (phone) => {
     const cleaned = phone.replace(/[\s()-]/g, '');
-  
+
     const belarusPhoneRegex = /^(\+375|375|80)(25|29|33|44|17)\d{7}$/;
     const russiaPhoneRegex = /^(\+7|7|8)(\d{10})$/;
-  
+
     return belarusPhoneRegex.test(cleaned) || russiaPhoneRegex.test(cleaned);
   };
   const isFormValid =
     form.fullName &&
     isValidPhone(form.phone) &&
     form.phone &&
-    form.size &&
+    (hasShoesInCart ? form.size : true) &&
     form.deliveryMethod &&
     ((form.deliveryMethod === 'Белпочта' && form.address) ||
       (form.deliveryMethod === 'Европочта' && form.branchNumber) ||
@@ -210,19 +213,21 @@ const Checkout = () => {
           />
         </div>
 
-        <div className='select-form'>
-          <label style={{ color: form.size ? '#000' : 'red' }}>Размер ступни (см)</label>
-          <select name="size" value={form.size} onChange={handleChange} required>
-            <option value="">Выберите</option>
-            <option value="25.5">25.5 см</option>
-            <option value="26">26 см</option>
-            <option value="26.5">26.5 см</option>
-            <option value="27.5">27.5 см</option>
-            <option value="28">28 см</option>
-            <option value="29">29 см</option>
-            <option value="29.5">29.5 см</option>
-          </select>
-        </div>
+        {hasShoesInCart && (
+          <div className='select-form'>
+            <label style={{ color: !form.size ? 'red' : '#000' }}>Размер ступни (см)</label>
+            <select name="size" value={form.size} onChange={handleChange} required>
+              <option value="">Выберите</option>
+              <option value="25.5">25.5 см</option>
+              <option value="26">26 см</option>
+              <option value="26.5">26.5 см</option>
+              <option value="27.5">27.5 см</option>
+              <option value="28">28 см</option>
+              <option value="29">29 см</option>
+              <option value="29.5">29.5 см</option>
+            </select>
+          </div>
+        )}
 
         <div className='select-form'>
           <label style={{ color: form.deliveryMethod ? '#000' : 'red' }}>Способ получения</label>
