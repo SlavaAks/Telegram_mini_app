@@ -7,7 +7,7 @@
   min-height: 40px;
   padding: 10px 20px;
   box-sizing: border-box;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
   background: white;
 }
@@ -90,4 +90,50 @@
 
 .shake {
   animation: shake 0.3s;
+}
+
+
+.channel-button {
+  font-size: 14px;
+  padding: 6px 10px;
+  background-color: #229ED9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.channel-menu-wrapper {
+  position: relative;
+}
+
+.channel-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  width: max-content;
+  min-width: 180px;
+  overflow: hidden;
+}
+
+.channel-dropdown a {
+  display: block;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.channel-dropdown a:hover {
+  background-color: #f1f1f1;
 }
